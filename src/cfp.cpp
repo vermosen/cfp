@@ -1,9 +1,5 @@
 
-#include <rcpp-utils.h>
-#include<cfp/model/recorders/cfp.h>
-#include<cfp/model/recorders/none.h>
-#include<cfp/model/solvers/cfp/simple.h>
-#include<cfp/model/cfp.h>
+#include<cfp.h>
 
 using param_type = otos::parameter<otos::cfp<double, 2>>;
 RCPP_EXPOSED_CLASS_NODECL(param_type)
