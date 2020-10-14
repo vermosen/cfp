@@ -1,0 +1,35 @@
+---
+title: "fft in package 'cfp'"
+author: "jean-mathieu vermosen"
+date: "4/26/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## FFT in R using the cfp package
+
+This document present the basic fft functions 
+
+```{r}
+library(data.table, warn.conflicts = FALSE)
+library(plotly, warn.conflicts = FALSE)
+library(cfp, warn.conflicts = FALSE)
+```
+
+## compute the convolution of two random variables
+
+```{r}
+flags <- create.fft.flag('estimate')
+plan  <- create.fft.plan(flags, size=1000)
+df    <- data.table(x=rnorm(1000), y=rnorm(1000))
+
+df[, conv:=cfp::convolution(plan, x, y)]
+
+plot_ly(df, y=~conv, type='scatter', mode='marks')
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

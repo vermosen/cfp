@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29920.165
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cfp", "cfp.vcxproj", "{C9E1E599-6CD6-437A-B651-B74804F44340}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Profiling|x64 = Profiling|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9E1E599-6CD6-437A-B651-B74804F44340}.Debug|x64.ActiveCfg = Debug|x64
+		{C9E1E599-6CD6-437A-B651-B74804F44340}.Debug|x64.Build.0 = Debug|x64
+		{C9E1E599-6CD6-437A-B651-B74804F44340}.Debug|x64.Deploy.0 = Debug|x64
+		{C9E1E599-6CD6-437A-B651-B74804F44340}.Profiling|x64.ActiveCfg = Profiling|x64
+		{C9E1E599-6CD6-437A-B651-B74804F44340}.Profiling|x64.Build.0 = Profiling|x64
+		{C9E1E599-6CD6-437A-B651-B74804F44340}.Profiling|x64.Deploy.0 = Profiling|x64
+		{C9E1E599-6CD6-437A-B651-B74804F44340}.Release|x64.ActiveCfg = Release|x64
+		{C9E1E599-6CD6-437A-B651-B74804F44340}.Release|x64.Build.0 = Release|x64
+		{C9E1E599-6CD6-437A-B651-B74804F44340}.Release|x64.Deploy.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4670022D-4178-4A90-9781-274C2645A60C}
+	EndGlobalSection
+EndGlobal

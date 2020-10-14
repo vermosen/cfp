@@ -1,2 +1,1 @@
-# cfp
-This R library implement the Chen-Feng-Palomar model 
+## Otos - quantitative finance toolkit framework

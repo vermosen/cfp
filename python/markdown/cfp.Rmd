@@ -1,0 +1,136 @@
+---
+title: "cfp model in package 'otos'"
+author: "jean-mathieu vermosen"
+date: "4/26/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+Sys.setenv(RETICULATE_PYTHON = '/opt/miniconda/bin/python')
+knitr::opts_chunk$set(echo = TRUE)
+
+library(reticulate)
+```
+
+## the Chen Feng Palomar model 
+
+This document present the Chen-Feng-Palomar model in python
+
+```{python}
+import sys
+sys.path.append('/home/jvermosen/git/otos/lib/Release/python')
+
+import otos.cfp
+import numpy as np
+import datatable as dt
+from datatable import f
+```
+
+the cfp model is specified by the following system:
+
+$$
+\begin{aligned}
+y_t &= x_t \cdot c + \epsilon_t \\
+x_{t+1} &= A_tx_t + \gamma_t
+\end{aligned}
+$$
+with $\epsilon_t\sim \mathcal N(0, r)$ and $\gamma_t\sim\mathcal N(0, Q_t)$. Furthermore, the matrix $A_t$ is such that:
+
+$$
+\begin{aligned}
+A_t=\left[
+\begin{array}{cc}
+\eta_t& 0\\
+0 & \nu_t
+\end{array}
+\right]
+\end{aligned}
+$$
+
+```{python}
+p = otos.cfp.parameters()
+p.a_eta = 0.3
+p.a_mu  = 1.0
+p.s_eta = 1e-15
+p.s_mu  = 1e-15
+p.r     = 1e-15
+p.pi    = [0.3, 1.0]
+p.sigma = [1e-15, 1e-15]
+p.psi   = [1.0, 1.0, 1.0, 1.0]
+```
+
+* simulate according to the passed parameters
+
+```{python}
+import numpy as np
+np.random.seed(1234)
+data = otos.cfp.simulate(p, size=1000)
+```
+
+# create model object and compute the kalman filter/smoother of the time series
+
+```{python}
+model = otos.cfp.model(p)
+flt = model.filter(data)
+smt = model.smoother(data)
+```
+
+# apply the em algorithm to retrieve the parameters
+
+```{python}
+
+# dummy
+model = otos.cfp.model(p)
+fit = model.emax(data, 10000, 1e-15)
+```
+
+# plot 
+
+```{python}
+
+import plotly, json
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+pl = make_subplots(rows = 1, cols = 1, shared_xaxes=True)
+
+pl = pl.add_trace(go.Scattergl(y = data, name = 'simulation'
+    ), row=1, col=1)
+pl = pl.add_trace(go.Scattergl(y = flt, name = 'filter'
+    ), row=1, col=1)
+pl = pl.add_trace(go.Scattergl(y = smt, name = 'smoother'
+    ), row=1, col=1)
+    
+plotly.io.write_html(pl, file='cfp_fig1.html', auto_open=False)
+```
+
+```{r echo=FALSE}
+htmltools::includeHTML("cfp_fig1.html")
+```
+
+```{python}
+
+np.random.seed(1234)
+
+p = otos.cfp.parameters()
+p.a_eta = 0.93970117964
+p.a_mu  = 0.617656427391
+p.s_eta = 0.00611157182105
+p.s_mu  = 0.100157446738
+p.pi    = [-0.0377453676475, 0.637412180444]
+p.sigma = [9.49012643982e-05, 0.00182247858807]
+p.r     = 0.0670554645138
+p.psi   = [ 
+           15.3322974898, 14.8914481022, 14.8960953411
+         , 14.7328251327, 14.717101214 , 14.600429107 , 14.5878141379
+         , 14.51710026  , 14.4863107795, 14.381950856 , 14.3423713871
+         , 14.2429064605, 14.2109154215, 14.1635064751, 14.2339929961
+         , 14.1522787054, 14.1947867672, 14.1869497863, 14.4385168913
+         , 14.3792550185, 14.4077635371, 14.4649051166, 14.624926768
+         , 14.7170306255, 15.0749366985, 15.9959231225 
+        ]
+
+md = otos.cfp.model(p)
+df = dt.Frame(sim=otos.cfp.simulate(p, size=1000))
+df = df[:, f[:].extend({'foo': md.predict(df[:, 'sim'], 10)})]
+```
