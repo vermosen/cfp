@@ -21,7 +21,7 @@ set(PKG_BUILD_ROOT "${CMAKE_CURRENT_BINARY_DIR}/build/cfp")
 message(DEBUG "PKG_BUILD_ROOT set to: ${PKG_BUILD_ROOT}")
 
 # step 0: strings necessary to strip ressource file
-set(CFP_MODULE_STR "RcppModules: cfp_module, fft_module, signals_module")
+set(CFP_MODULE_STR "RcppModules: cfp_module")
 	
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 	set(R_EXTRA_COMPILER_FLAG "-O0 -g -DDEBUG")
@@ -32,8 +32,9 @@ elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
 	set(R_EXTRA_LINKER_FLAG "${LTO}")
 endif()
 
-set(INCLUDE_LIBS_STR "-std=c++17 ${R_EXTRA_COMPILER_FLAG} -I ../inst/include -I \"${PROJECT_SOURCE_DIR}/src\" -I \"${CONAN_INCLUDE_DIRS_BOOST}\" -I \"${CONAN_INCLUDE_DIRS_EIGEN}\"")
-set(LINKED_LIBS_STR "${R_EXTRA_LINKER_FLAG} -L${PROJECT_BINARY_DIR}/lib -L${CONAN_LIB_DIRS_FFTW} -lotoscpp -lfftw3")
+message(DEBUG "CONAN_INCLUDE_DIRS_RCPPUTILS set to ${CONAN_INCLUDE_DIRS_RCPPUTILS}")
+set(INCLUDE_LIBS_STR "-std=c++17 ${R_EXTRA_COMPILER_FLAG} -I ../inst/include -I \"${CONAN_INCLUDE_DIRS_EIGEN}\" -I \"${PROJECT_SOURCE_DIR}/src\" -I \"${CONAN_INCLUDE_DIRS_RCPPUTILS}\"")
+set(LINKED_LIBS_STR "${R_EXTRA_LINKER_FLAG} -L${PROJECT_BINARY_DIR}/lib")
 
 set(MAKEVARS_CONTENT
 	"PKG_CPPFLAGS=${INCLUDE_LIBS_STR}\nPKG_LIBS=${LINKED_LIBS_STR}"

@@ -1,5 +1,5 @@
 
-#include <rcpp-utils.h>  // from inst/include
+#include <RcppUtils/RcppUtils.h>  // utility classes for Rcpp 
 
 #include<cfp/model/recorders/cfp.h>
 #include<cfp/model/recorders/none.h>

@@ -76,8 +76,6 @@
     <ClInclude Include="python\package\src\cfp.h" />
     <ClInclude Include="R\package\cfp\snippets\selfadjoint.R" />
     <ClInclude Include="R\package\cfp\inst\include\cfp.h" />
-    <ClInclude Include="R\package\cfp\inst\include\fwd\rcpp-utils.h" />
-    <ClInclude Include="R\package\cfp\inst\include\rcpp-utils.h" />
     <ClInclude Include="R\package\cfp\R\model.R" />
     <ClInclude Include="R\package\cfp\snippets\kalman.R" />
     <ClInclude Include="src\cfp\fwd\model.h" />
