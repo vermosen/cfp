@@ -1,32 +1,28 @@
 #pragma once
-#ifndef OTOS_MODEL_CACHES_CFP_H
-#define OTOS_MODEL_CACHES_CFP_H
+#ifndef CFP_MODEL_CACHES_CFP_H
+#define CFP_MODEL_CACHES_CFP_H
 
 #include <cfp/math/optimization/solver.h>
 
 #include <cfp/model/cache.h>
 
-namespace cfp    {
+#include <cfp/fwd/model.h>
 
-  template <
-      typename T
-    , int Size
-  >
-  class cfp;
+namespace cfp {
 
   template <typename T, int Size>
-  struct cache<cfp<T, Size>, caches::type::simple> {
+  struct cache<model<T, Size>, caches::type::simple> {
   public:
-    using matrix_type = typename cfp<T, Size>::matrix_type;
-    using vrow_type   = typename cfp<T, Size>::vrow_type  ;
-    using vcol_type   = typename cfp<T, Size>::vcol_type  ;
-    using data_type   = typename cfp<T, Size>::data_type  ;
+    using matrix_type = typename model<T, Size>::matrix_type;
+    using vrow_type   = typename model<T, Size>::vrow_type  ;
+    using vcol_type   = typename model<T, Size>::vcol_type  ;
+    using data_type   = typename model<T, Size>::data_type  ;
 
   public:
     cache() = delete;
     cache(std::size_t);
 
-    friend cfp<T, Size>;
+    friend model<T, Size>;
 
   private:
     std::size_t size() const { return m_t; }
@@ -54,7 +50,7 @@ namespace cfp    {
   };
 
   template <typename T, int Size>
-  inline cache<cfp<T, Size>, caches::type::simple>::cache(std::size_t t)
+  inline cache<model<T, Size>, caches::type::simple>::cache(std::size_t t)
   : m_t(t) {
 
     m_ccovs.reserve(m_t + 1 );

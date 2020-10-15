@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_TAGS_H
-#define OTOS_TAGS_H
+#ifndef CFP_TAGS_H
+#define CFP_TAGS_H
 
 namespace cfp::tags {
 

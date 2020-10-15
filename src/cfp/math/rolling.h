@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_MATH_ROLLING_H
-#define OTOS_MATH_ROLLING_H
+#ifndef CFP_MATH_ROLLING_H
+#define CFP_MATH_ROLLING_H
 
 namespace cfp {
 

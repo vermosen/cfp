@@ -1,29 +1,34 @@
 #pragma once
-#ifndef OTOS_MODEL_SIMULATION_CFP_H
-#define OTOS_MODEL_SIMULATION_CFP_H
+#ifndef CFP_MODEL_SIMULATION_CFP_H
+#define CFP_MODEL_SIMULATION_CFP_H
 
-#include <cfp/model/parameters/cfp.h>
+#include <cfp/model.h>
 
-#include <cfp/traits/device.h>
 #include <cfp/traits/parameter.h>
 #include <cfp/traits/model.h>
 
+#include <cfp/model/parameters/cfp.h>
 #include <cfp/model/simulations/base.h>
+
 #include <cfp/math/distribution/gaussian_mult.h>
 
 namespace cfp {
 
   template <typename Device>
-  class simulation<cfp<double, 2>, Device> 
-    : public simulations::base<simulation<cfp<double, 2>, Device>> {
-  public:
-    template <std::size_t Sz>
-    using sampler_t = cfp::gaussian_mult<double, Sz>;    
-    using parent = simulations::base<simulation<cfp<double, 2>, Device>>;
-    using parameter_type = parameter<cfp<double, 2>>;
+  class simulation<model<double, 2>, Device> 
+    : public simulations::base<simulation<model<double, 2>, Device>> {
+  private:
+    using parent = simulations::base<simulation<model<double, 2>, Device>>;
 
   public:
-    simulation(const parameter<cfp<double, 2>>& params, std::size_t len, int seed);
+    template <std::size_t Sz>
+    using sampler_t = gaussian_mult<double, Sz>;
+
+  public:
+    simulation(
+        const parameter<model<double, 2>>& params
+      , std::size_t len
+      , int seed);
     
     friend parent;
   private:
@@ -31,14 +36,14 @@ namespace cfp {
   };
 
   template <typename Device>
-  inline simulation<cfp<double, 2>, Device>::simulation(
-      const parameter<cfp<double, 2>>& params
+  inline simulation<model<double, 2>, Device>::simulation(
+      const parameter<model<double, 2>>& params
     , std::size_t len, int seed)
     : parent(params, len, seed) {}
 
   template <typename Device>
   inline Eigen::VectorXd 
-  simulation<cfp<double, 2>, Device>::next_impl() {
+  simulation<model<double, 2>, Device>::next_impl() {
   
     auto& device = parent::m_device;
     auto& p = parent::m_params;
@@ -78,4 +83,4 @@ namespace cfp {
   }
 }
 
-#endif // OTOS_MODEL_SIMULATION_CFP_H
+#endif // CFP_MODEL_SIMULATION_CFP_H

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_MATH_OPTIMIZATION_CRITERION_H
-#define OTOS_MATH_OPTIMIZATION_CRITERION_H
+#ifndef CFP_MATH_OPTIMIZATION_CRITERION_H
+#define CFP_MATH_OPTIMIZATION_CRITERION_H
 
 namespace cfp     {
 namespace criteria {
@@ -25,4 +25,4 @@ namespace criteria {
     class criterion;
 }
 
-#endif // OTOS_MATH_OPTIMIZATION_CRITERION_H
+#endif // CFP_MATH_OPTIMIZATION_CRITERION_H

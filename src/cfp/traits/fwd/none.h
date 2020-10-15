@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_TRAITS_FWD_NONE_H
-#define OTOS_TRAITS_FWD_NONE_H
+#ifndef CFP_TRAITS_FWD_NONE_H
+#define CFP_TRAITS_FWD_NONE_H
 
 namespace cfp   {
 namespace traits {
@@ -9,4 +9,4 @@ namespace traits {
 	struct none;
 }}
 
-#endif // OTOS_TRAITS_FWD_NONE_H
+#endif // CFP_TRAITS_FWD_NONE_H

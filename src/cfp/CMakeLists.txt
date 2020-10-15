@@ -6,14 +6,15 @@ setup_component(TARGET ${TARGET_NAME})
 
 file(GLOB_RECURSE TARGET_HEADERS CONFIGURE_DEPENDS "*.h")
 
-add_library(
-    ${TARGET_NAME} STATIC
-    ${TARGET_HEADERS}
-    ${TARGET_SOURCES}
+add_library(${TARGET_NAME} INTERFACE)
+
+target_include_directories(
+    ${TARGET_NAME} 
+    INTERFACE ${TARGET_HEADERS}    
 )
 
 target_link_libraries(${TARGET_NAME} 
-    PUBLIC 	
+    INTERFACE 	
     CONAN_PKG::eigen
 )
 

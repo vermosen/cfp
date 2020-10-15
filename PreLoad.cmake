@@ -17,13 +17,6 @@ endif()
 
 message(STATUS "info: defaulting python path to ${PYTHON_LOCATION_HINT} --")
 
-# CUDA switch (enabled by default)
-if(DISABLE_CUDA)
-    set(ENABLE_CUDA OFF CACHE INTERNAL "" FORCE)
-else()
-    set(ENABLE_CUDA ON CACHE INTERNAL "" FORCE)
-endif()
-
 if (CMAKE_PROFILE_UC STREQUAL "GCC93")
 
         set(DEVTOOLS_ROOT "/opt/gcc93")

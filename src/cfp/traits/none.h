@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_TRAITS_NONE_H
-#define OTOS_TRAITS_NONE_H
+#ifndef CFP_TRAITS_NONE_H
+#define CFP_TRAITS_NONE_H
 
 namespace cfp::traits {
 
@@ -10,4 +10,4 @@ namespace cfp::traits {
 	};
 }
 
-#endif // OTOS_TRAITS_NONE_H
+#endif // CFP_TRAITS_NONE_H

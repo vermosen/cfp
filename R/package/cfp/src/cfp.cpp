@@ -4,17 +4,17 @@
 #include<cfp/model/recorders/cfp.h>
 #include<cfp/model/recorders/none.h>
 #include<cfp/model/solvers/cfp/simple.h>
-#include<cfp/model/cfp.h>
+#include<cfp/model.h>
 
-using param_type = cfp::parameter<cfp::cfp<double, 2>>;
+using param_type = cfp::parameter<cfp::model<double, 2>>;
 RCPP_EXPOSED_CLASS_NODECL(param_type)
 
 Rcpp::NumericVector simulate_cfp(
-    const cfp::parameter<cfp::cfp<double, 2>>& p
+    const cfp::parameter<cfp::model<double, 2>>& p
   , std::size_t n, int seed) {
 
   Eigen::VectorXd out = Eigen::VectorXd::Zero(n);
-  auto model = cfp::cfp<double, 2>(p);
+  auto model = cfp::model<double, 2>(p);
   model.simulate(out, seed);
   return Rcpp::wrap(out);
 }
@@ -27,7 +27,7 @@ Rcpp::NumericVector filter_cfp(
   const auto in = Rcpp::as<std::vector<double>>(col);
   std::vector<double> out(n, NAN);
 
-  cfp::cfp<double, 2> model(params);
+  cfp::model<double, 2> model(params);
 
   model.filter(
       Eigen::Map<const Eigen::VectorXd>(in.data(), in.size())
@@ -45,7 +45,7 @@ Rcpp::NumericVector smoother_cfp(
   const auto in = Rcpp::as<std::vector<double>>(col);
   std::vector<double> out(n, NAN);
 
-  cfp::cfp<double, 2> model(params);
+  cfp::model<double, 2> model(params);
 
   model.smoother(
       Eigen::Map<const Eigen::VectorXd>(in.data(), in.size())
@@ -68,7 +68,7 @@ Rcpp::NumericVector predict_cfp(
   const auto in = Rcpp::as<std::vector<double>>(col);
   std::vector<double> out(n, NAN);
 
-  cfp::cfp<double, 2> model(params);
+  cfp::model<double, 2> model(params);
 
   model.predict(
       Eigen::Map<const Eigen::VectorXd>(in.data(), in.size())
@@ -78,7 +78,7 @@ Rcpp::NumericVector predict_cfp(
   return Rcpp::wrap(out);
 }
 
-cfp::parameter<cfp::cfp<double, 2>> em_cfp(
+cfp::parameter<cfp::model<double, 2>> em_cfp(
     const param_type& params
   , const Rcpp::NumericVector& col
   , std::size_t nstep
@@ -86,9 +86,9 @@ cfp::parameter<cfp::cfp<double, 2>> em_cfp(
 
   std::size_t nrows = col.size();
   const auto in = Rcpp::as<std::vector<double>>(col);
-  cfp::parameter<cfp::cfp<double, 2>> out;
+  cfp::parameter<cfp::model<double, 2>> out;
 
-  cfp::cfp<double, 2> model(params);
+  cfp::model<double, 2> model(params);
 
   model.emax2<cfp::recorders::type::none>(
     Eigen::Map<const Eigen::VectorXd>(in.data(), in.size())
@@ -105,8 +105,8 @@ Rcpp::DataFrame em_cfp_debug(
 
   std::size_t nrows = col.size();
   const auto in = Rcpp::as<std::vector<double>>(col);
-  cfp::parameter<cfp::cfp<double, 2>> out;
-  cfp::cfp<double, 2> model(params);
+  cfp::parameter<cfp::model<double, 2>> out;
+  cfp::model<double, 2> model(params);
 
   auto diagnostics = model.emax2<cfp::recorders::type::simple>(
     Eigen::Map<const Eigen::VectorXd>(in.data(), in.size())
@@ -171,7 +171,7 @@ Rcpp::DataFrame em_cfp_debug(
 
 RCPP_MODULE(cfp_module) {
 
-  using param_type = cfp::parameter<cfp::cfp<double, 2>>;
+  using param_type = cfp::parameter<cfp::model<double, 2>>;
 
   Rcpp::class_<param_type>("otos_cfp_param")
     .constructor()

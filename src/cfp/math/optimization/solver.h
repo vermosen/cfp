@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_MATH_SOLVER_H
-#define OTOS_MATH_SOLVER_H
+#ifndef CFP_MATH_SOLVER_H
+#define CFP_MATH_SOLVER_H
 
 namespace cfp {
 

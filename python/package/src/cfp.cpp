@@ -4,7 +4,7 @@
 #include <pybind11/stl.h>
 #include <pybind11/eigen.h>
 
-#include <cfp/model/cfp.h>
+#include <cfp/model.h>
 
 using namespace pybind11::literals;
 
@@ -12,7 +12,7 @@ void init_cfp(pybind11::module& m) {
 
   auto sub = m.def_submodule("cfp");
 
-  using model_type = cfp::cfp<double, 2>;
+  using model_type = cfp::model<double, 2>;
   using param_type = cfp::parameter<model_type>;
   using data_type  = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_TRAITS_FWD_DEVICE_H
-#define OTOS_TRAITS_FWD_DEVICE_H
+#ifndef CFP_TRAITS_FWD_DEVICE_H
+#define CFP_TRAITS_FWD_DEVICE_H
 
 namespace cfp::traits {
 
@@ -8,4 +8,4 @@ namespace cfp::traits {
   struct device;
 }
 
-#endif // OTOS_TRAITS_FWD_DEVICE_H
+#endif // CFP_TRAITS_FWD_DEVICE_H

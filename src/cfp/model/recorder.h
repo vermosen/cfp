@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_MATH_DETAILS_RECORDER_H
-#define OTOS_MATH_DETAILS_RECORDER_H
+#ifndef CFP_MATH_DETAILS_RECORDER_H
+#define CFP_MATH_DETAILS_RECORDER_H
 
 namespace cfp      {
 namespace recorders {

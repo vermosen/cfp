@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_UTILS_FWD_DICTIONARY_H
-#define OTOS_UTILS_FWD_DICTIONARY_H
+#ifndef CFP_UTILS_FWD_DICTIONARY_H
+#define CFP_UTILS_FWD_DICTIONARY_H
 
 #include <map>
 #include <string>
@@ -37,7 +37,7 @@ namespace util {
 }}
 
 // macro for declaring an enum dictionary
-#define OTOS_DECLARE_ENUM(X, SEQ)							              \
+#define CFP_DECLARE_ENUM(X, SEQ)							              \
 namespace cfp {                                            \
 namespace util {                                            \
                                                             \
@@ -47,7 +47,7 @@ namespace util {                                            \
     create();                                               \
                                                             \
   public:                                                   \
-    static constexpr std::size_t size = OTOS_SIZE(SEQ)      \
+    static constexpr std::size_t size = CFP_SIZE(SEQ)      \
                                                             \
     static constexpr const                                  \
     std::array<std::pair<X, const char*>, size>             \
@@ -55,11 +55,11 @@ namespace util {                                            \
       return                                                \
       {                                                     \
         {                                                   \
-          OTOS_FOR_EACH_DECLARE_PAIR(X, SEQ)		            \
+          CFP_FOR_EACH_DECLARE_PAIR(X, SEQ)		            \
         }                                                   \
       };                                                    \
     }                                                       \
   };                                                        \
 }}                                                          \
 
-#endif // OTOS_UTILS_FWD_DICTIONARY_H
+#endif // CFP_UTILS_FWD_DICTIONARY_H

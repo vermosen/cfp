@@ -1,7 +1,7 @@
 Package: cfp
 Type: Package
 Title: R package for wavelet transformation.
-Version: ${OTOS_VERSION}
+Version: ${CFP_VERSION}
 Date: ${CURRENT_DATE}
 Author: jean-mathieu vermosen <vermosen@yahoo.com>
 Maintainer: jean-mathieu vermosen <vermosen@yahoo.com>
@@ -25,4 +25,4 @@ Suggests:
   wotan          (>= 0.1.1),
   digest         (>= 0.6.25)
 LinkingTo: Rcpp
-${OTOS_MODULE_STR}
+${CFP_MODULE_STR}

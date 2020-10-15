@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_MODEL_PARAMETER_H
-#define OTOS_MODEL_PARAMETER_H
+#ifndef CFP_MODEL_PARAMETER_H
+#define CFP_MODEL_PARAMETER_H
 
 namespace cfp {
 
@@ -13,4 +13,4 @@ namespace cfp {
   struct parameter;
 }
 
-#endif // OTOS_MODEL_PARAMETER_H
+#endif // CFP_MODEL_PARAMETER_H

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS__TRAITS_FWD_PROBLEM_H
-#define OTOS__TRAITS_FWD_PROBLEM_H
+#ifndef CFP__TRAITS_FWD_PROBLEM_H
+#define CFP__TRAITS_FWD_PROBLEM_H
 
 namespace cfp   {
 namespace traits {

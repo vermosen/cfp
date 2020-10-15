@@ -32,7 +32,6 @@ set(CMAKE_CXX_STANDARD ${CXX_DIALECT})
 # load the utils module
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/module/utils.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/r/CMakeLists.txt")
-INCLUDE("${CMAKE_CURRENT_LIST_DIR}/cuda/CMakeLists.txt")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/documentation/CMakeLists.txt")
 
 # set verbosity

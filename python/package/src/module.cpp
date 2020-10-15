@@ -7,7 +7,7 @@ PYBIND11_MODULE(_otos, m) {
 
   m.attr("have_eigen") = true;
 
-  m.doc() = "module for fast signal frequency analysis";
+  m.doc() = "implement the Chen-Feng-Palomar model";
 
   init_cfp(m);
 }

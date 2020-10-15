@@ -5,8 +5,8 @@ DOCLINES = (__doc__ or '').split("\n")
 if sys.version_info[:2] < (3, 6):
     raise RuntimeError("Python version >= 3.6 required.")
 
-MAJOR = ${OTOS_MAJOR_VERSION}
-MINOR = ${OTOS_MINOR_VERSION}
-MICRO = ${OTOS_BUILD_VERSION}
+MAJOR = ${CFP_MAJOR_VERSION}
+MINOR = ${CFP_MINOR_VERSION}
+MICRO = ${CFP_BUILD_VERSION}
 
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)

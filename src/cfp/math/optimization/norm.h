@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_MATH_OPTIMIZATION_NORM_H
-#define OTOS_MATH_OPTIMIZATION_NORM_H
+#ifndef CFP_MATH_OPTIMIZATION_NORM_H
+#define CFP_MATH_OPTIMIZATION_NORM_H
 
 namespace cfp {
 
@@ -17,4 +17,4 @@ namespace norms {
   class norm;
 }
 
-#endif // OTOS_MATH_OPTIMIZATION_NORM_H
+#endif // CFP_MATH_OPTIMIZATION_NORM_H

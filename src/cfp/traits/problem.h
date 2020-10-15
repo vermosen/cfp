@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_TRAITS_PROBLEM_H
-#define OTOS_TRAITS_PROBLEM_H
+#ifndef CFP_TRAITS_PROBLEM_H
+#define CFP_TRAITS_PROBLEM_H
 
 #include <cfp/traits/fwd/problem.h>
 

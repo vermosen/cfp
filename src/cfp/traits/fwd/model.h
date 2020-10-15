@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_TRAITS_FWD_MODEL_H
-#define OTOS_TRAITS_FWD_MODEL_H
+#ifndef CFP_TRAITS_FWD_MODEL_H
+#define CFP_TRAITS_FWD_MODEL_H
 
 namespace cfp::traits {
 
@@ -8,4 +8,4 @@ namespace cfp::traits {
   struct model;
 }
 
-#endif // OTOS_TRAITS_FWD_MODEL_H
+#endif // CFP_TRAITS_FWD_MODEL_H

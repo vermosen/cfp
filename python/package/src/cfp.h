@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_WRAPPER_CFP
-#define OTOS_WRAPPER_CFP
+#ifndef CFP_WRAPPER_CFP
+#define CFP_WRAPPER_CFP
 
 #include <pybind11/pybind11.h>
 

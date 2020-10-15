@@ -34,7 +34,7 @@ message(STATUS "project version set to ${${PROJECT_NAME_U}_VERSION}")
 
 PROJECT(
 	${PROJECT_NAME}
-	LANGUAGES C CXX CUDA
+	LANGUAGES C CXX
 	VERSION	${${PROJECT_NAME_U}_VERSION}
 	DESCRIPTION "the cfp lib"
 )
@@ -43,14 +43,16 @@ PROJECT(
 # import thirdparty packages #
 ##############################
 
-set(GTEST_VERS    "1.8.1" )
-set(RCPP_VERS     "1.0.4" )
-set(PYBIND11_VERS "2.5.0" )
-set(EIGEN_VERS    "3.3.7" )
-set(DOXYGEN_VERS  "1.8.18")
+set(GTEST_VERS      "1.8.1" )
+set(RCPP_VERS       "1.0.4" )
+set(PYBIND11_VERS   "2.5.0" )
+set(EIGEN_VERS      "3.3.7" )
+set(DOXYGEN_VERS    "1.8.18")
+set(RCPPUTILS_VERS  "0.1.2" )
 
 set(PACKAGES
    rcpp
+   RcppUtils
    gtest
    pybind11
    eigen
@@ -87,7 +89,7 @@ add_subdirectory(src/cfp)
 #    add the project applications   #
 #####################################
 
-#add_subdirectory(R/package)
+add_subdirectory(R/package)
 add_subdirectory(python/package)
 
 #####################################

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_TRAITS_DEVICE_H
-#define OTOS_TRAITS_DEVICE_H
+#ifndef CFP_TRAITS_DEVICE_H
+#define CFP_TRAITS_DEVICE_H
 
 #include <cfp/traits/fwd/device.h>
 #include <cfp/model/simulation.h>
@@ -13,4 +13,4 @@ namespace cfp::traits {
 	};
 }
 
-#endif // OTOS_TRAITS_DEVICE_H
+#endif // CFP_TRAITS_DEVICE_H

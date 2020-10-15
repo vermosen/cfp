@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_MODEL_CACHES_NONE_H
-#define OTOS_MODEL_CACHES_NONE_H
+#ifndef CFP_MODEL_CACHES_NONE_H
+#define CFP_MODEL_CACHES_NONE_H
 
 #include <cfp/model/cache.h>
 
@@ -18,4 +18,4 @@ namespace cfp    {
   };
 }
 
-#endif // OTOS_MODEL_CACHES_NONE_H
+#endif // CFP_MODEL_CACHES_NONE_H

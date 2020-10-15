@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_TRAITS_PARAMETER_H
-#define OTOS_TRAITS_PARAMETER_H
+#ifndef CFP_TRAITS_PARAMETER_H
+#define CFP_TRAITS_PARAMETER_H
 
 #include <cfp/traits/fwd/parameter.h>
 #include <cfp/model/simulation.h>
@@ -9,9 +9,9 @@
 namespace cfp::traits {
 
 	template <typename Model, typename Device>
-	struct parameter<::cfp::simulation<Model, Device>> {
+	struct parameter<simulation<Model, Device>> {
 		using type = cfp::parameter<Model>;
 	};
 }
 
-#endif // OTOS_TRAITS_PARAMETER_H
+#endif // CFP_TRAITS_PARAMETER_H

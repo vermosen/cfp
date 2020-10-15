@@ -8,7 +8,7 @@ using namespace cfp;
 
 TEST(cfp, set_simulation) {
 
-  using model_type = cfp<double, 2>;
+  using model_type = model<double, 2>;
   parameter<model_type> params;
   params.m_a_eta = 0.4;
   params.m_a_mu  = 0.6;

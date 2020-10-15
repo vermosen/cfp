@@ -4,6 +4,7 @@
 #include <Eigen/Dense>
 
 #include <cfp/model/simulation.h>
+
 #include <cfp/traits/fwd/device.h>
 #include <cfp/traits/fwd/parameter.h>
 #include <cfp/traits/fwd/model.h>

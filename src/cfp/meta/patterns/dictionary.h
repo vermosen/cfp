@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_UTILS_DICTIONARY_H
-#define OTOS_UTILS_DICTIONARY_H
+#ifndef CFP_UTILS_DICTIONARY_H
+#define CFP_UTILS_DICTIONARY_H
 
 #include <sstream>
 #include <typeinfo>
@@ -151,4 +151,4 @@ namespace util {
   }
 }}
 
-#endif // OTOS_UTILS_DICTIONARY_H
+#endif // CFP_UTILS_DICTIONARY_H

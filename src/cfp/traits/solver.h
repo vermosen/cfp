@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_TRAITS_SOLVER_H
-#define OTOS_TRAITS_SOLVER_H
+#ifndef CFP_TRAITS_SOLVER_H
+#define CFP_TRAITS_SOLVER_H
 
 #include <cfp/traits/fwd/solver.h>
 
@@ -12,4 +12,4 @@ namespace cfp::traits {
   };
 }
 
-#endif // OTOS_TRAITS_SOLVER_H
+#endif // CFP_TRAITS_SOLVER_H

@@ -21,7 +21,7 @@ set(PKG_BUILD_ROOT "${CMAKE_CURRENT_BINARY_DIR}/build/cfp")
 message(DEBUG "PKG_BUILD_ROOT set to: ${PKG_BUILD_ROOT}")
 
 # step 0: strings necessary to strip ressource file
-set(OTOS_MODULE_STR "RcppModules: cfp_module, fft_module, signals_module")
+set(CFP_MODULE_STR "RcppModules: cfp_module, fft_module, signals_module")
 	
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 	set(R_EXTRA_COMPILER_FLAG "-O0 -g -DDEBUG")

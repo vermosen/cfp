@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_FWD_RCPP_UTILS_H
-#define OTOS_FWD_RCPP_UTILS_H
+#ifndef CFP_FWD_RCPP_UTILS_H
+#define CFP_FWD_RCPP_UTILS_H
 
 #include <complex>
 
@@ -42,4 +42,4 @@ namespace traits {
   template<typename T> class Exporter< Eigen::Map<Eigen::SparseMatrix<T, Eigen::RowMajor> > >;
 }}
 
-#endif // OTOS_FWD_RCPP-UTILS_H
+#endif // CFP_FWD_RCPP-UTILS_H

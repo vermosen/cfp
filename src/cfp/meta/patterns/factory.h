@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_META_PATTERNS_FACTORY_H
-#define OTOS_META_PATTERNS_FACTORY_H
+#ifndef CFP_META_PATTERNS_FACTORY_H
+#define CFP_META_PATTERNS_FACTORY_H
 
 #include <map>
 #include <memory>
@@ -100,4 +100,4 @@ cfp::meta::register_class<               \
       B, K, D, ##__VA_ARGS__              \
 > D::m_register(V)
 
-#endif // OTOS_META_PATTERNS_FACTORY_H
+#endif // CFP_META_PATTERNS_FACTORY_H

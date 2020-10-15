@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_MODEL_CACHE_H
-#define OTOS_MODEL_CACHE_H
+#ifndef CFP_MODEL_CACHE_H
+#define CFP_MODEL_CACHE_H
 
 namespace cfp    {
 namespace caches  {
@@ -15,4 +15,4 @@ namespace caches  {
   struct cache;
 }
 
-#endif // OTOS_MODEL_CACHE_H
+#endif // CFP_MODEL_CACHE_H

@@ -33,24 +33,13 @@
     <None Include="R\package\cfp\ressources\DESCRIPTION.in" />
     <None Include="R\package\cfp\ressources\Makevars.in" />
     <None Include="R\package\cfp\ressources\NAMESPACE.in" />
-    <None Include="R\package\cfp\R\debug.R" />
-    <None Include="R\package\cfp\R\ewm.R" />
-    <None Include="R\package\cfp\R\fft.R" />
-    <None Include="R\package\cfp\R\otos.R" />
-    <None Include="R\package\cfp\R\plot.R" />
-    <None Include="R\package\cfp\R\rolling.R" />
-    <None Include="R\package\cfp\R\utils.R" />
-    <None Include="R\package\cfp\R\wavelet.R" />
+    <None Include="R\package\cfp\R\cfp.R" />
     <None Include="R\package\cfp\R\zzz.R" />
     <None Include="R\package\cfp\snippets\fft.R" />
     <None Include="R\package\cfp\snippets\plot.R" />
     <None Include="R\package\cfp\snippets\simul.cfp.R" />
     <None Include="R\package\cfp\tests\testthat.R" />
-    <None Include="R\package\cfp\tests\testthat\test.eigen.R" />
-    <None Include="R\package\cfp\tests\testthat\test.ewm.R" />
     <None Include="R\package\cfp\tests\testthat\test.cfp.R" />
-    <None Include="R\package\cfp\tests\testthat\test.fft.R" />
-    <None Include="R\package\cfp\tests\testthat\test.rolling.R" />
     <None Include="R\scripts\autocorr.comp.R" />
     <None Include="R\scripts\debug.cfp.R" />
     <None Include="R\scripts\wavelet.comp.R" />
@@ -86,15 +75,14 @@
   <ItemGroup>
     <ClInclude Include="python\package\src\cfp.h" />
     <ClInclude Include="R\package\cfp\snippets\selfadjoint.R" />
-    <ClInclude Include="R\package\cfp\src\eigen.h" />
-    <ClInclude Include="R\package\cfp\src\ewm.h" />
-    <ClInclude Include="R\package\cfp\inst\include\otos.h" />
+    <ClInclude Include="R\package\cfp\inst\include\cfp.h" />
     <ClInclude Include="R\package\cfp\inst\include\fwd\rcpp-utils.h" />
     <ClInclude Include="R\package\cfp\inst\include\rcpp-utils.h" />
-    <ClInclude Include="R\package\cfp\R\cfp.R" />
+    <ClInclude Include="R\package\cfp\R\model.R" />
     <ClInclude Include="R\package\cfp\snippets\kalman.R" />
-    <ClInclude Include="R\package\cfp\src\debug.h" />
-    <ClInclude Include="R\package\cfp\src\rolling.h" />
+    <ClInclude Include="src\cfp\fwd\model.h" />
+    <ClInclude Include="src\cfp\math\distribution\details\gauss.h" />
+    <ClInclude Include="src\cfp\math\distribution\gaussian_mult.h" />
     <ClInclude Include="src\cfp\math\optimization\criteria\zerogradientnorm.h" />
     <ClInclude Include="src\cfp\math\optimization\criterion.h" />
     <ClInclude Include="src\cfp\math\optimization\norm.h" />
@@ -114,7 +102,7 @@
     <ClInclude Include="src\cfp\meta\preprocessor\size.h" />
     <ClInclude Include="src\cfp\model\cache.h" />
     <ClInclude Include="src\cfp\model\caches\none.h" />
-    <ClInclude Include="src\cfp\model\cfp.h" />
+    <ClInclude Include="src\cfp\model.h" />
     <ClInclude Include="src\cfp\model\caches\cfp.h" />
     <ClInclude Include="src\cfp\model\parameter.h" />
     <ClInclude Include="src\cfp\model\parameters\cfp.h" />
@@ -149,14 +137,7 @@
   <ItemGroup>
     <ClCompile Include="python\package\src\cfp.cpp" />
     <ClCompile Include="python\package\src\module.cpp" />
-    <ClCompile Include="R\package\cfp\src\debug.cpp" />
     <ClCompile Include="R\package\cfp\src\cfp.cpp" />
-    <ClCompile Include="R\package\cfp\src\eigen.cpp" />
-    <ClCompile Include="R\package\cfp\src\ewm.cpp" />
-    <ClCompile Include="R\package\cfp\src\fft.cpp" />
-    <ClCompile Include="R\package\cfp\src\rolling.cpp" />
-    <ClCompile Include="R\package\cfp\src\signals.cpp" />
-    <ClCompile Include="R\package\cfp\tests\testthat\test.signals.R" />
     <ClCompile Include="test\cfp\main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -169,7 +150,7 @@
     <TargetLinuxPlatform>Generic</TargetLinuxPlatform>
     <LinuxProjectType>{FC1A4D80-50E9-41DA-9192-61C0DBAA00D2}</LinuxProjectType>
     <!--the two custom variables of the project which are not showing up in the GUI-->
-    <kProjectPath>/otos</kProjectPath>
+    <kProjectPath>/cfp</kProjectPath>
     <kBinPath>/bin</kBinPath>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

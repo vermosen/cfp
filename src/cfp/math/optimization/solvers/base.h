@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_MATH_OPTIMIZATION_SOLVERS_BASE_H
-#define OTOS_MATH_OPTIMIZATION_SOLVERS_BASE_H
+#ifndef CFP_MATH_OPTIMIZATION_SOLVERS_BASE_H
+#define CFP_MATH_OPTIMIZATION_SOLVERS_BASE_H
 
 #include<Eigen/Core>
 #include<Eigen/Dense>
@@ -36,4 +36,4 @@ namespace solvers {
   };
 }}
 
-#endif // OTOS_MATH_OPTIMIZATION_SOLVERS_BASE_H
+#endif // CFP_MATH_OPTIMIZATION_SOLVERS_BASE_H

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_TRAITS_FWD_DELIMITER_H
-#define OTOS_TRAITS_FWD_DELIMITER_H
+#ifndef CFP_TRAITS_FWD_DELIMITER_H
+#define CFP_TRAITS_FWD_DELIMITER_H
 
 namespace cfp   {
 namespace traits {
@@ -9,4 +9,4 @@ namespace traits {
 	struct delimiter;
 }}
 
-#endif // OTOS_TRAITS_FWD_DELIMITER_H
+#endif // CFP_TRAITS_FWD_DELIMITER_H

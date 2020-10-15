@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_MODEL_RECORDERS_NONE_H
-#define OTOS_MODEL_RECORDERS_NONE_H
+#ifndef CFP_MODEL_RECORDERS_NONE_H
+#define CFP_MODEL_RECORDERS_NONE_H
 
 #include<Eigen/Core>
 #include<Eigen/Dense>
@@ -19,4 +19,4 @@ namespace cfp {
   };
 }
 
-#endif // OTOS_MODEL_RECORDERS_NONE_H
+#endif // CFP_MODEL_RECORDERS_NONE_H

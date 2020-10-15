@@ -1,8 +1,8 @@
 #pragma once
-#ifndef OTOS_MODEL_CFP_H
-#define OTOS_MODEL_CFP_H
+#ifndef CFP_MODEL_CFP_H
+#define CFP_MODEL_CFP_H
 
-#include <boost/optional.hpp>
+#include <optional>
 
 #include<Eigen/Core>
 #include<Eigen/Dense>
@@ -26,28 +26,28 @@ namespace cfp {
   template <
       typename T
     , int Size>
-  class cfp {
+  class model {
   public:
     using matrix_type = Eigen::Matrix<T, Size, Size>;
     using vrow_type   = Eigen::Matrix<T, 1, Size>;
     using vcol_type   = Eigen::Matrix<T, Size, 1>;
     using data_type   = Eigen::Matrix<T, Eigen::Dynamic, 1>;
     using param_type  = Eigen::Matrix<T, Eigen::Dynamic, 1>;    // internal
-    using solver_type = solver<cfp<T, Size>, solvers::type::simple>;
-    using cache_type  = cache<cfp<T, Size>, caches::type::simple>;
+    using solver_type = solver<model<T, Size>, solvers::type::simple>;
+    using cache_type  = cache<model<T, Size>, caches::type::simple>;
 
   private:
     static constexpr double an11() { return 1.0; }  // defaults to 1.0
     static constexpr double qn22() { return 0.0; }  // defaults to ~0.0+
 
   public:
-    cfp(const parameter<cfp<T, Size>>&);
+    model(const parameter<model<T, Size>>&);
 
-    cfp(const cfp&);
-    cfp& operator=(const cfp&);
+    model(const model&);
+    model& operator=(const model&);
 
   //private:
-    cfp(const matrix_type&
+    model(const matrix_type&
       , const matrix_type&
       , const matrix_type&
       , const matrix_type&
@@ -64,9 +64,9 @@ namespace cfp {
     void simulate(Eigen::Ref<data_type> out, int seed) const {}
       
     template<recorders::type Type>
-    typename recorder<cfp<T, Size>, Type>::data_type emax2(
+    typename recorder<model<T, Size>, Type>::data_type emax2(
         Eigen::Ref<const data_type> in
-      , parameter<cfp<T, Size>>& out
+      , parameter<model<T, Size>>& out
       , std::size_t nstep, double tol);
 
     // internal methods
@@ -74,7 +74,7 @@ namespace cfp {
     void filter_impl(
         Eigen::Ref<const data_type> in
       , Eigen::Ref<data_type> out
-      , boost::optional<cache_type>& c);
+      , std::optional<cache_type>& c);
 
     void predict_impl(
         Eigen::Ref<const data_type> in
@@ -87,14 +87,14 @@ namespace cfp {
       , Eigen::Ref<data_type> out
       , cache_type& cache);
 
-    cfp<T, Size> emax_impl(
+    model<T, Size> emax_impl(
         Eigen::Ref<const data_type> in
       , cache_type& cache);
 
     // solver interface
   private:
-    friend solver<cfp<T, Size>, solvers::type::simple>;
-    cfp(const param_type&);
+    friend solver<model<T, Size>, solvers::type::simple>;
+    model(const param_type&);
     param_type parameters() const;
 
   private:
@@ -108,7 +108,7 @@ namespace cfp {
   };
 
   template <typename T, int Size>
-  inline cfp<T, Size>::cfp(const param_type& params) {
+  inline model<T, Size>::model(const param_type& params) {
 
     m_A[0]  << params[0], 0.0, 0.0, params[1];
     m_A[1]  << an11(), 0.0, 0.0, params[1];
@@ -124,7 +124,7 @@ namespace cfp {
   }
 
   template <typename T, int Size>
-  inline cfp<T, Size>::cfp(const parameter<cfp<T, Size>>& params) {
+  inline model<T, Size>::model(const parameter<model<T, Size>>& params) {
     m_A[0]  << params.m_a_eta, 0.0, 0.0, params.m_a_mu;
     m_A[1]  << an11(), 0.0, 0.0, params.m_a_mu;
     m_Q[0]  << params.m_s_eta, 0.0, 0.0, params.m_s_mu;
@@ -137,7 +137,7 @@ namespace cfp {
   }
 
   template <typename T, int Size>
-  inline cfp<T, Size>::cfp(const cfp<T, Size>& o) {
+  inline model<T, Size>::model(const model<T, Size>& o) {
     if (this != &o) {
       m_A     = o.m_A;
       m_Q     = o.m_Q;
@@ -149,8 +149,8 @@ namespace cfp {
   }
 
   template <typename T, int Size>
-  inline cfp<T, Size>&
-    cfp<T, Size>::operator=(const cfp& o) {
+  inline model<T, Size>&
+    model<T, Size>::operator=(const model& o) {
     if (this != &o) {
       m_A     = o.m_A;
       m_Q     = o.m_Q;
@@ -164,7 +164,7 @@ namespace cfp {
   }
 
   template <typename T, int Size>
-  inline cfp<T, Size>::cfp(
+  inline model<T, Size>::model(
       const matrix_type& Ap
     , const matrix_type& An
     , const matrix_type& Qp
@@ -179,8 +179,8 @@ namespace cfp {
     , m_sigma(sigma), m_r(r) {}
 
   template <typename T, int Size>
-  inline typename cfp<T, Size>::param_type
-    cfp<T, Size>::parameters() const {
+  inline typename model<T, Size>::param_type
+    model<T, Size>::parameters() const {
 
     param_type p = param_type::Zero(9 + m_psi.size());
 
@@ -201,51 +201,51 @@ namespace cfp {
   }
 
   template <typename T, int Size>
-  inline void cfp<T, Size>::filter(
+  inline void model<T, Size>::filter(
       Eigen::Ref<const data_type> in
     , Eigen::Ref<data_type> out) {
-    boost::optional<cache_type> c = boost::none;
+    std::optional<cache_type> c = std::nullopt;
     return filter_impl(in, out, c);
   }
 
   template <typename T, int Size>
-  inline void cfp<T, Size>::predict(
+  inline void model<T, Size>::predict(
       Eigen::Ref<const data_type> in
     , std::size_t steps
     , Eigen::Ref<data_type> out) {
 
-    boost::optional<cache_type> c(in.size());
+    std::optional<cache_type> c(in.size());
     filter_impl(in, out, c);
     predict_impl(in, static_cast<int>(steps), out, *c);
   }
 
   template <typename T, int Size>
-  inline void cfp<T, Size>::smoother(
+  inline void model<T, Size>::smoother(
       Eigen::Ref<const data_type> in
     , Eigen::Ref<data_type> out) {
 
-    boost::optional<cache_type> c(in.size());
+    std::optional<cache_type> c(in.size());
     filter_impl(in, out, c);
     smoother_impl(in, out, *c);
   }
 
   template <typename T, int Size>
   template <recorders::type Recorder>
-  inline typename recorder<cfp<T, Size>, Recorder>::data_type
-    cfp<T, Size>::emax2(
+  inline typename recorder<model<T, Size>, Recorder>::data_type
+    model<T, Size>::emax2(
         Eigen::Ref<const data_type> in
-      , parameter<cfp<T, Size>>& out
+      , parameter<model<T, Size>>& out
       , std::size_t maxstep
       , double tol) {
 
     using criteria_type = criterion<
-      cfp<T, Size>
+      model<T, Size>
       , criteria::type::zeroGradientNorm>;
 
     auto tmp = parameters();
     Eigen::VectorXd dummy = Eigen::VectorXd::Zero(in.size());
     Eigen::Map<Eigen::VectorXd> mdummy(dummy.data(), dummy.size());
-    cfp<T, Size> t = *this;
+    model<T, Size> t = *this;
 
     solver_type s(in);
     criteria_type cr(tol);
@@ -272,10 +272,10 @@ namespace cfp {
   }
 
   template<typename T, int Size>
-  inline void cfp<T, Size>::filter_impl(
+  inline void model<T, Size>::filter_impl(
       Eigen::Ref<const data_type> in
     , Eigen::Ref<data_type> out
-    , boost::optional<cache_type>& c) {
+    , std::optional<cache_type>& c) {
 
     int period = m_psi.size();
 
@@ -326,7 +326,7 @@ namespace cfp {
   }
 
   template <typename T, int Size>
-  inline void cfp<T, Size>::predict_impl(
+  inline void model<T, Size>::predict_impl(
       Eigen::Ref<const data_type> in
     , int steps
     , Eigen::Ref<data_type> out
@@ -352,7 +352,7 @@ namespace cfp {
   }
 
   template<typename T, int Size>
-  inline void cfp<T, Size>::smoother_impl(
+  inline void model<T, Size>::smoother_impl(
       Eigen::Ref<const data_type> in
     , Eigen::Ref<data_type> out
     , cache_type& c) {
@@ -395,7 +395,7 @@ namespace cfp {
   }
 
   template<typename T, int Size>
-  inline cfp<T, Size> cfp<T, Size>::emax_impl(
+  inline model<T, Size> model<T, Size>::emax_impl(
     Eigen::Ref<const data_type> in
     , cache_type& c) {
 
@@ -530,7 +530,7 @@ namespace cfp {
 
     r_up /= c.size();
 
-    cfp<T, Size> model(
+    model<T, Size> model(
         ap_up
       , an_up
       , qp_up

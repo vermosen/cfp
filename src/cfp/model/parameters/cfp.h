@@ -1,21 +1,22 @@
 #pragma once
-#ifndef OTOS_MODEL_PARAMETERS_CFP_H
-#define OTOS_MODEL_PARAMETERS_CFP_H
+#ifndef CFP_MODEL_PARAMETERS_CFP_H
+#define CFP_MODEL_PARAMETERS_CFP_H
 
 #include <vector>
 #include <ostream>
 
 #include <cfp/model/parameter.h>
 
+#include <cfp/model.h>
+
+#include <cfp/traits/device.h>
+#include <cfp/traits/parameter.h>
+#include <cfp/traits/model.h>
+
 namespace cfp {
 
-  template <
-      typename T
-    , int Size>
-  class cfp;
-
   template<>
-  struct parameter<cfp<double, 2>> {
+  struct parameter<model<double, 2>> {
     parameter() {}
     double m_a_eta = 0.0;
     double m_a_mu = 0.0;
@@ -35,7 +36,7 @@ namespace cfp {
 }
 
 std::ostream& operator <<(std::ostream& oss
-  , const cfp::parameter<cfp::cfp<double, 2>>& p) {
+  , const cfp::parameter<cfp::model<double, 2>>& p) {
 
   oss
     << "a_eta: "  << p.m_a_eta << "\n"

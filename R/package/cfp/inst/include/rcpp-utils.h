@@ -1,6 +1,6 @@
 #pragma once
-#ifndef OTOS_RCPP_UTILS_H
-#define OTOS_RCPP_UTILS_H
+#ifndef CFP_RCPP_UTILS_H
+#define CFP_RCPP_UTILS_H
 
 #include <Rcpp.h>
 
@@ -369,4 +369,4 @@ namespace traits {
   };
 }}
 
-#endif // OTOS_RCPP_UTILS_H
+#endif // CFP_RCPP_UTILS_H

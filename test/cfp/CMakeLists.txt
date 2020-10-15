@@ -15,8 +15,8 @@ add_executable(
 
 target_link_libraries(${TARGET_NAME}
 	PUBLIC 
+	cfp
 	CONAN_PKG::gtest 
-	otoscpp
 	Threads::Threads
 )
 
