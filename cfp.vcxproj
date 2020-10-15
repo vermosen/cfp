@@ -18,7 +18,6 @@
     <None Include=".gitignore" />
     <None Include=".gitmodules" />
     <None Include="docs\sphinx\conf.py.in" />
-    <None Include="cmake\module\utils.cmake" />
     <None Include="docs\Doxyfile.in" />
     <None Include="docs\sphinx\otos.rst" />
     <None Include="docs\sphinx\index.rst" />
