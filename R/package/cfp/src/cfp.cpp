@@ -173,7 +173,7 @@ RCPP_MODULE(cfp_module) {
 
   using param_type = cfp::parameter<cfp::model<double, 2>>;
 
-  Rcpp::class_<param_type>("otos_cfp_param")
+  Rcpp::class_<param_type>("parameters")
     .constructor()
     .field("a.eta", &param_type::m_a_eta)
     .field("a.mu" , &param_type::m_a_mu )
@@ -187,10 +187,10 @@ RCPP_MODULE(cfp_module) {
     .field("r"    , &param_type::m_r    )
     ;
 
-  Rcpp::function("otos_simulate_cfp", &simulate_cfp );
-  Rcpp::function("otos_filter_cfp"  , &filter_cfp   );
-  Rcpp::function("otos_smoother_cfp", &smoother_cfp );
-  Rcpp::function("otos_predict_cfp" , &predict_cfp  );
-  Rcpp::function("otos_em_cfp"      , &em_cfp       );
-  Rcpp::function("otos_em_cfp_debug", &em_cfp_debug );
+  Rcpp::function("simulate_cfp", &simulate_cfp );
+  Rcpp::function("filter_cfp"  , &filter_cfp   );
+  Rcpp::function("smoother_cfp", &smoother_cfp );
+  Rcpp::function("predict_cfp" , &predict_cfp  );
+  Rcpp::function("em_cfp"      , &em_cfp       );
+  Rcpp::function("em_cfp_debug", &em_cfp_debug );
 }

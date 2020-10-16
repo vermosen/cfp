@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.13)
 
-SET(TARGET_NAME _otos)
+SET(TARGET_NAME _cfp)
 
 find_package(pybind11 REQUIRED 
 	HINTS ${CONAN_PYBIND11_ROOT}/share/cmake/pybind11
@@ -20,7 +20,7 @@ install(
 	LIBRARY DESTINATION ${INSTALL_LIB_DIR}/python/cfp
 )
 
-add_custom_command(TARGET _otos
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:_otos> ${PYTHON_DOCS_TARGET}/cfp
+add_custom_command(TARGET _cfp
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:_cfp> ${PYTHON_DOCS_TARGET}/cfp
 	DEPENDS copy_python_files
 )

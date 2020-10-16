@@ -11,7 +11,7 @@ set_tests_properties(cfp.python.package.import
 
 add_test(
 	NAME cfp.python.package.import.fails
-	COMMAND ${PYTHON_EXECUTABLE} -c "from otosss import *"
+	COMMAND ${PYTHON_EXECUTABLE} -c "from cfppp import *"
 	WORKING_DIRECTORY ${TEST_FILE_DIR}
 )
 

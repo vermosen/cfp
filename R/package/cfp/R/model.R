@@ -40,7 +40,7 @@ cfp.model.parameters <- function(
     s1 <- c(s.eta, s.mu)
   }
 
-  params <- new(otos_cfp_param)
+  params <- new(cfp_parameters)
   params$a.eta <- a.eta
   params$a.mu  <- a.mu
   params$s.eta <- s.eta
@@ -66,7 +66,7 @@ cfp.model.parameters <- function(
 #' @param seed the seed of the simulation
 #' @param debug returns internal of the simulation
 #' @export
-simulate.Rcpp_otos_cfp_param <- function(params, n=1000, seed=Sys.time(), debug=FALSE) {
+simulate.Rcpp_cfp_parameters <- function(params, n=1000, seed=Sys.time(), debug=FALSE) {
   
   # state space rep
   # x_t = alpha * x_t-1 + w_t, w_t  ~ N(0, eta)
@@ -157,12 +157,12 @@ simulate.Rcpp_otos_cfp_param <- function(params, n=1000, seed=Sys.time(), debug=
 #' @param col a data.frame column
 #' @param smooth compute the smoother as well
 #' @export
-kalman.Rcpp_otos_cfp_param <- function(params, col, smooth=FALSE) {
+kalman.Rcpp_cfp_parameters <- function(params, col, smooth=FALSE) {
 
     if (smooth) {
-		(otos_smoother_cfp(params, col));
+		(smoother_cfp(params, col));
 	} else {
-		(otos_filter_cfp(params, col));
+		(filter_cfp(params, col));
 	}
 }
 
@@ -174,8 +174,8 @@ kalman.Rcpp_otos_cfp_param <- function(params, col, smooth=FALSE) {
 #' @param col the data to predict
 #' @param period number of period to predict
 #' @export
-predict.Rcpp_otos_cfp_param <- function(params, col, period=1) {
-    (otos_predict_cfp(params, col, period));
+predict.Rcpp_cfp_parameters <- function(params, col, period=1) {
+    (predict_cfp(params, col, period));
 }
 
 #' compute the expectation-maximization estimator for the cfp model
@@ -186,12 +186,12 @@ predict.Rcpp_otos_cfp_param <- function(params, col, period=1) {
 #' @param debug returns the parameter sequence 
 #' @param tol convergence tolerance 
 #' @export
-em.Rcpp_otos_cfp_param <- function(param, col, max.step=30, tol=1e-9, debug=FALSE) {
+em.Rcpp_cfp_param <- function(param, col, max.step=30, tol=1e-9, debug=FALSE) {
     
     if (debug) {
-		(as.data.table(otos_em_cfp_debug(param, col, max.step, tol)));
+		(as.data.table(em_cfp_debug(param, col, max.step, tol)));
 	} else {
-		(otos_em_cfp(param, col, max.step, tol));
+		(em_cfp(param, col, max.step, tol));
 	}
 }
 
@@ -202,5 +202,5 @@ em.Rcpp_otos_cfp_param <- function(param, col, max.step=30, tol=1e-9, debug=FALS
 #' @param seed the seed of the simulation
 #' @export
 sim.cfp.2 <- function(sim, n=1000, seed=Sys.time()) {
-    (otos_simulate_cfp(params, n, seed));
+    (simulate_cfp(params, n, seed));
 }

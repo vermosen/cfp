@@ -2,7 +2,7 @@
 
 #' cfp
 #'
-#' Otos is a nice package
+#' cfp implement the Chen-Feng-Palomar model
 #'
 #'  Imports
 #' @import data.table
@@ -24,7 +24,7 @@
 }
 
 # extend S4 classes here ...
-setMethod('show', 'Rcpp_otos_cfp_param', function(object) {
+setMethod('show', 'Rcpp_cfp_parameters', function(object) {
 
     cat('a.eta:', object$a.eta, '\n')
     cat('a.mu: ', object$a.mu , '\n')

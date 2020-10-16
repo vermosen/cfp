@@ -23,7 +23,7 @@ file(COPY ${SPHINX_DOCS}
   FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
 )
  
-add_custom_target(otos_sphinx_docs ALL
+add_custom_target(cfp_sphinx_docs ALL
     ${SPHINX_EXECUTABLE}
     -q -b html
     -Dbreathe_projects.cfp=${DOXYGEN_OUTPUT_DIR}/xml
@@ -31,5 +31,5 @@ add_custom_target(otos_sphinx_docs ALL
     "${CMAKE_CURRENT_BINARY_DIR}/html"
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Building HTML documentation with Sphinx"
-    DEPENDS otos_doxygen_docs _otos
+    DEPENDS cfp_doxygen_docs _cfp
 )

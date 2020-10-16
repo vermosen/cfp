@@ -17,9 +17,10 @@
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include=".gitmodules" />
+    <None Include="cmake\module\utils.cmake" />
     <None Include="docs\sphinx\conf.py.in" />
     <None Include="docs\Doxyfile.in" />
-    <None Include="docs\sphinx\otos.rst" />
+    <None Include="docs\sphinx\cfp.rst" />
     <None Include="docs\sphinx\index.rst" />
     <None Include="docs\sphinx\python.rst" />
     <None Include="LICENSE" />
@@ -60,7 +61,6 @@
     <Text Include="python\package\CMakeLists.txt" />
     <Text Include="python\package\src\CMakeLists.txt" />
     <Text Include="R\package\CMakeLists.txt" />
-    <Text Include="R\package\cfp\src\CMakeLists.txt" />
     <Text Include="src\cfp\CMakeLists.txt" />
     <Text Include="test\cfp\CMakeLists.txt" />
     <Text Include="test\CMakeLists.txt" />

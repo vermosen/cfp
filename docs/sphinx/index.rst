@@ -11,7 +11,7 @@ Welcome to cfp's documentation!
 
    cfp
    python
-   exhale/otos_root
+   exhale/cfp_root
 
    :caption: Contents:
 

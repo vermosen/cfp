@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.13)
 
-option(CFP-DOCS "create the sphinx documentation of the project" OFF)
+option(CFP-DOCS "create the sphinx documentation of the project" ON)
 
 set(PROJECT_HOME "${CMAKE_CURRENT_LIST_DIR}")
 set(PROJECT_NAME cfp CACHE STRING "" FORCE)

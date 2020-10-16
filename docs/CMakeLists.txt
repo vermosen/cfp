@@ -41,6 +41,6 @@ add_custom_command(
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-add_custom_target(otos_doxygen_docs ALL DEPENDS ${DOXYGEN_INDEX_FILE})
+add_custom_target(cfp_doxygen_docs ALL DEPENDS ${DOXYGEN_INDEX_FILE})
 
 add_subdirectory(sphinx)

@@ -63,7 +63,7 @@ breathe_default_project = "@PROJECT_NAME@"
 # Setup the exhale extension
 exhale_args = {
     "containmentFolder":     "./exhale",
-    "rootFileName":          "otos_root.rst",
+    "rootFileName":          "cfp_root.rst",
     "rootFileTitle":         "API Reference",
     "doxygenStripFromPath":  "..",
     "createTreeView":        True,
