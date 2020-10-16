@@ -7,6 +7,4 @@ set(PYTHONPATH_TESTSUITE "${INSTALL_LIB_DIR}/python")
 message(DEBUG "test pythonpath set to ${PYTHONPATH_TESTSUITE}")
 
 add_subdirectory(cfp)
-add_subdirectory(math)
 add_subdirectory(package)
-add_subdirectory(fourier)

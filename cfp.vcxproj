@@ -44,12 +44,8 @@
     <None Include="R\scripts\debug.cfp.R" />
     <None Include="R\scripts\wavelet.comp.R" />
     <None Include="test\python\cfp\test.py" />
-    <None Include="test\python\fourier\test.py" />
-    <None Include="test\python\math\test.py" />
     <None Include="test\python\fourier\convolve.py" />
-    <None Include="test\python\fourier\convolve\main.py" />
     <None Include="test\python\fourier\fft.py" />
-    <None Include="test\python\fourier\fft\main.py" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
@@ -66,8 +62,6 @@
     <Text Include="test\CMakeLists.txt" />
     <Text Include="test\python\cfp\CMakeLists.txt" />
     <Text Include="test\python\CMakeLists.txt" />
-    <Text Include="test\python\math\CMakeLists.txt" />
-    <Text Include="test\python\fourier\CMakeLists.txt" />
     <Text Include="test\python\package\CMakeLists.txt" />
     <Text Include="test\R\CMakeLists.txt" />
   </ItemGroup>

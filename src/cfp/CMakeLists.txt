@@ -10,7 +10,7 @@ add_library(${TARGET_NAME} INTERFACE)
 
 target_include_directories(
     ${TARGET_NAME} 
-    INTERFACE ${TARGET_HEADERS}    
+    INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}  
 )
 
 target_link_libraries(${TARGET_NAME} 
