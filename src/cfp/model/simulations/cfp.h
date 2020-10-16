@@ -66,8 +66,8 @@ namespace cfp {
     std::size_t period = psi.size();
 
     auto sampler_n = sampler_t<2>(Eigen::Vector2d::Zero(), Q_n, device);
-    //auto sampler_p = sampler_t<2>(Eigen::Vector2d::Zero(), Q_p, device);
-    //auto sampler_r = sampler_t<1>(0, p.m_r, device);
+    auto sampler_p = sampler_t<2>(Eigen::Vector2d::Zero(), Q_p, device);
+    auto sampler_r = sampler_t<1>(0, p.m_r, device);
 
     //Eigen::Vector2d gauss = sampler_n.sample(); // matrix of multivariate gaussian samples
  

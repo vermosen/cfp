@@ -130,6 +130,7 @@
     <ClCompile Include="python\package\src\module.cpp" />
     <ClCompile Include="R\package\cfp\src\cfp.cpp" />
     <ClCompile Include="test\cfp\main.cpp" />
+    <ClCompile Include="TODO" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C9E1E599-6CD6-437A-B651-B74804F44340}</ProjectGuid>

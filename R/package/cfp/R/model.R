@@ -186,7 +186,7 @@ predict.Rcpp_cfp_parameters <- function(params, col, period=1) {
 #' @param debug returns the parameter sequence 
 #' @param tol convergence tolerance 
 #' @export
-em.Rcpp_cfp_param <- function(param, col, max.step=30, tol=1e-9, debug=FALSE) {
+em.Rcpp_cfp_parameters <- function(param, col, max.step=30, tol=1e-9, debug=FALSE) {
     
     if (debug) {
 		(as.data.table(em_cfp_debug(param, col, max.step, tol)));

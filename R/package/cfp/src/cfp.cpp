@@ -173,7 +173,7 @@ RCPP_MODULE(cfp_module) {
 
   using param_type = cfp::parameter<cfp::model<double, 2>>;
 
-  Rcpp::class_<param_type>("parameters")
+  Rcpp::class_<param_type>("cfp_parameters")
     .constructor()
     .field("a.eta", &param_type::m_a_eta)
     .field("a.mu" , &param_type::m_a_mu )
