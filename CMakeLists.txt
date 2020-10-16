@@ -48,7 +48,7 @@ set(RCPP_VERS       "1.0.4" )
 set(PYBIND11_VERS   "2.5.0" )
 set(EIGEN_VERS      "3.3.7" )
 set(DOXYGEN_VERS    "1.8.18")
-set(RCPPUTILS_VERS  "0.1.2" )
+set(RCPPUTILS_VERS  "0.1.3" )
 
 set(PACKAGES
    rcpp
