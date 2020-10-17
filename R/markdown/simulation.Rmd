@@ -1,35 +1,89 @@
 ---
-title: "fft in package 'cfp'"
+title: "simulate data according to some cfp model"
 author: "jean-mathieu vermosen"
-date: "4/26/2020"
+date: "10/17/2020"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(cfp)
+library(plotly)
+library(parallel)
+library(data.table)
 ```
 
-## FFT in R using the cfp package
+those have been calibrated on real SPY 2019 data
 
-This document present the basic fft functions 
+```{r, echo=FALSE}
 
-```{r}
-library(data.table, warn.conflicts = FALSE)
-library(plotly, warn.conflicts = FALSE)
-library(cfp, warn.conflicts = FALSE)
+params <- cfp::cfp.model.parameters(
+   a.eta = 0.93970117964
+ , a.mu  = 0.617656427391
+ , s.eta = 0.00611157182105
+ , s.mu  = 0.100157446738
+ , pi    = c(-0.0377453676475, 0.637412180444)
+ , s1    = c(9.49012643982e-05, 0.00182247858807)
+ , r     = 0.0670554645138
+ , psi   = c(  15.3322974898, 14.8914481022, 14.8960953411
+             , 14.7328251327, 14.717101214 , 14.600429107 , 14.5878141379
+             , 14.51710026  , 14.4863107795, 14.381950856 , 14.3423713871
+             , 14.2429064605, 14.2109154215, 14.1635064751, 14.2339929961
+             , 14.1522787054, 14.1947867672, 14.1869497863, 14.4385168913
+             , 14.3792550185, 14.4077635371, 14.4649051166, 14.624926768
+             , 14.7170306255, 15.0749366985, 15.9959231225)
+)
+
+# number of intraday observations
+t <- length(params$psi)
+
+# display the param object
+show(params)
+
 ```
 
-## compute the convolution of two random variables
+We create 50 simulations for 1 month of data each and display a few of them
 
-```{r}
-flags <- create.fft.flag('estimate')
-plan  <- create.fft.plan(flags, size=1000)
-df    <- data.table(x=rnorm(1000), y=rnorm(1000))
+```{r, echo=FALSE}
 
-df[, conv:=cfp::convolution(plan, x, y)]
+size <- length(params$psi) * 30 # intraday length * 30 business days
+sims <- lapply(X=seq(1, 50), FUN=function(x){ return (cfp::simulate(params, n=size, seed=x)$data) })
 
-plot_ly(df, y=~conv, type='scatter', mode='marks')
+pl <- plot_ly(type = 'scatter', mode='lines')
+
+for (i in seq(1, 4)) {
+  pl <- pl %>% add_lines(data=sims[[i]], y=~y, x=seq(1, size), name=paste0('simulation ', i))
+}
+
+pl
+```
+
+em algorithm: now that we have simulated some data, we try to infer the parameters back using the EM algorithm. 
+
+```{r, echo=FALSE}
+
+n.cpu <- detectCores() - 1
+
+# dummy starting point
+x0 <- cfp::cfp.model.parameters(psi=rep(1, t), s.mu=1e-4)
+
+# apply the algo on each sim *using* the dummy starting point
+dfs <- rbindlist(mclapply(X=seq_along(sims), FUN=function(i) {
+        df <- cfp::em(x0, col=sims[[i]][, y], max.step=10000, tol=1e-15, debug=TRUE)
+        df[, sim.id:=i]
+        (df)
+}, mc.cores = n.cpu))
 
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+now we can plot some diagnostics
+
+```{r, echo=FALSE}
+
+# give the average 
+result <- dfs[, last(.SD), by=sim.id][, lapply(.SD, mean)]
+
+result
+
+```
