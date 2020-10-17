@@ -26,7 +26,7 @@ cfp.model.parameters <- function(
     a.eta = 0.3
   , a.mu  = 0.3
   , s.eta = 1e-4
-  , s.mu  = 1.0
+  , s.mu  = 1e-4
   , psi=c(1.0, 1.0, 1.0, 1.0)
   , pi = NULL
   , s1 = NULL
