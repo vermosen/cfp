@@ -84,8 +84,6 @@
     <ClInclude Include="src\cfp\math\optimization\solver.h" />
     <ClInclude Include="src\cfp\math\traits\fwd\point.h" />
     <ClInclude Include="src\cfp\math\traits\point.h" />
-    <ClInclude Include="src\cfp\meta\asm\stopwatch.h" />
-    <ClInclude Include="src\cfp\meta\patterns\alias.h" />
     <ClInclude Include="src\cfp\meta\patterns\factory.h" />
     <ClInclude Include="src\cfp\meta\preprocessor\cat.h" />
     <ClInclude Include="src\cfp\meta\preprocessor\pair.h" />
