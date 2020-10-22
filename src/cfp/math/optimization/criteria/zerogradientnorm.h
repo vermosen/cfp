@@ -9,7 +9,7 @@ namespace cfp {
   template <typename Problem>
   class criterion<Problem, criteria::type::zeroGradientNorm> {
   public:
-    using param_type = typename Problem::param_type;
+    using param_type = typename Problem::repr_type;
   
   public:
     criterion(double tol) 

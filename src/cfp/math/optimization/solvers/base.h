@@ -9,7 +9,7 @@
 #include <cfp/model/recorder.h>
 #include <cfp/traits/fwd/model.h>
 
-namespace cfp    {
+namespace cfp     {
 namespace solvers {
 
   template <
@@ -18,7 +18,7 @@ namespace solvers {
   class base {
   public:
     using model_type = typename traits::model<Child>::type;
-    using param_type = typename model_type::param_type;
+    using param_type = typename model_type::repr_type;
     using data_type  = typename model_type::data_type ;
 
     public:

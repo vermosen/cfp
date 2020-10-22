@@ -4,18 +4,20 @@
 #include<cfp/model/recorders/cfp.h>
 #include<cfp/model/recorders/none.h>
 #include<cfp/model/solvers/cfp/simple.h>
+#include <cfp/model/simulations/cfp.h>
+
 #include<cfp/model.h>
 
 using param_type = cfp::parameter<cfp::model<double, 2>>;
+
 RCPP_EXPOSED_CLASS_NODECL(param_type)
 
 Rcpp::NumericVector simulate_cfp(
     const cfp::parameter<cfp::model<double, 2>>& p
   , std::size_t n, int seed) {
 
-  Eigen::VectorXd out = Eigen::VectorXd::Zero(n);
   auto model = cfp::model<double, 2>(p);
-  model.simulate(out, seed);
+  Eigen::VectorXd out = model.simulate(n, seed);
   return Rcpp::wrap(out);
 }
 
@@ -90,7 +92,7 @@ cfp::parameter<cfp::model<double, 2>> em_cfp(
 
   cfp::model<double, 2> model(params);
 
-  model.emax2<cfp::recorders::type::none>(
+  model.emax<cfp::recorders::type::none>(
     Eigen::Map<const Eigen::VectorXd>(in.data(), in.size())
     , out, nstep, tol);
 
@@ -108,7 +110,7 @@ Rcpp::DataFrame em_cfp_debug(
   cfp::parameter<cfp::model<double, 2>> out;
   cfp::model<double, 2> model(params);
 
-  auto diagnostics = model.emax2<cfp::recorders::type::simple>(
+  auto diagnostics = model.emax<cfp::recorders::type::simple>(
     Eigen::Map<const Eigen::VectorXd>(in.data(), in.size())
     , out, nstep, tol);
 

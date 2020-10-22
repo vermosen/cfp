@@ -26,7 +26,7 @@ namespace cfp {
     public:
       using model_type = model<T, Size>;
       using data_type  = typename model_type::data_type;
-      using param_type = typename model_type::param_type;
+      using param_type = typename ancestor::param_type;
 
     public:
       solver(Eigen::Ref<const data_type> data);
@@ -45,8 +45,9 @@ namespace cfp {
   template <recorders::type Recorder, typename Criteria>
   typename recorder<model<T, Size>, Recorder>::data_type
   inline solver<model<T, Size>, solvers::type::simple>::minimize(
-        Eigen::Ref<typename model_type::param_type> start
-      , Criteria cr, std::size_t maxsteps) {
+        Eigen::Ref<param_type> start
+      , Criteria cr
+      , std::size_t maxsteps) {
 
     auto& data = ancestor::m_data;
 
@@ -61,14 +62,14 @@ namespace cfp {
       it.filter_impl(data, Eigen::Ref<data_type>(dummy), c);
       it.smoother_impl(data, Eigen::Ref<data_type>(dummy), *c);
       model<T, Size> res = it.emax_impl(data, *c);
-      auto params = res.parameters();
-      filled = cr.template apply(it.parameters() - params);
+      auto params = res.representation();
+      filled = cr.template apply(it.representation() - params);
       rec.record(params);
       it = res;
 
     } while (--maxsteps > 0 && !filled);
 
-    start = it.parameters();
+    start = it.representation();
     return rec.data();
   }
 }
