@@ -32,13 +32,15 @@ namespace cfp {
     using vrow_type   = Eigen::Matrix<T, 1, Size>;
     using vcol_type   = Eigen::Matrix<T, Size, 1>;
     using data_type   = Eigen::Matrix<T, Eigen::Dynamic, 1>;
-    using param_type  = Eigen::Matrix<T, Eigen::Dynamic, 1>;    // internal
     using solver_type = solver<model<T, Size>, solvers::type::simple>;
     using cache_type  = cache<model<T, Size>, caches::type::simple>;
 
+  public:
+    using repr_type = Eigen::Matrix<T, Eigen::Dynamic, 1>;
+
   private:
-    static constexpr double an11() { return 1.0; }  // defaults to 1.0
-    static constexpr double qn22() { return 0.0; }  // defaults to ~0.0+
+    static constexpr double an11() { return 1.0; }
+    static constexpr double qn22() { return 0.0; }
 
   public:
     model(const parameter<model<T, Size>>&);
@@ -46,8 +48,12 @@ namespace cfp {
     model(const model&);
     model& operator=(const model&);
 
+  public:
+    parameter<model<T, Size>> parameters() const; // public accessor
+
   //private:
-    model(const matrix_type&
+    model(
+        const matrix_type&
       , const matrix_type&
       , const matrix_type&
       , const matrix_type&
@@ -55,21 +61,20 @@ namespace cfp {
       , const vcol_type&
       , const matrix_type&
       , double
-    );
+    ); // TODO instead: model(repr_type)
 
   public:
     void filter(Eigen::Ref<const data_type> in, Eigen::Ref<data_type> out);
     void predict(Eigen::Ref<const data_type> in, std::size_t steps, Eigen::Ref<data_type> out);
     void smoother(Eigen::Ref<const data_type> in, Eigen::Ref<data_type> out);
-    void simulate(Eigen::Ref<data_type> out, int seed) const {}
+    model::data_type simulate(std::size_t len, int seed) const;
       
     template<recorders::type Type>
-    typename recorder<model<T, Size>, Type>::data_type emax2(
+    typename recorder<model<T, Size>, Type>::data_type emax(
         Eigen::Ref<const data_type> in
       , parameter<model<T, Size>>& out
       , std::size_t nstep, double tol);
 
-    // internal methods
   private:
     void filter_impl(
         Eigen::Ref<const data_type> in
@@ -91,11 +96,11 @@ namespace cfp {
         Eigen::Ref<const data_type> in
       , cache_type& cache);
 
-    // solver interface
+    // solver interface. TODO: push in base class
   private:
-    friend solver<model<T, Size>, solvers::type::simple>;
-    model(const param_type&);
-    param_type parameters() const;
+    template <typename, solvers::type> friend class solver;
+    model(const repr_type&);
+    repr_type representation() const;
 
   private:
     const vrow_type m_c = vrow_type::Constant(1.0);
@@ -108,7 +113,7 @@ namespace cfp {
   };
 
   template <typename T, int Size>
-  inline model<T, Size>::model(const param_type& params) {
+  inline model<T, Size>::model(const repr_type& params) {
 
     m_A[0]  << params[0], 0.0, 0.0, params[1];
     m_A[1]  << an11(), 0.0, 0.0, params[1];
@@ -178,11 +183,18 @@ namespace cfp {
     , m_psi(psi), m_pi(pi)
     , m_sigma(sigma), m_r(r) {}
 
-  template <typename T, int Size>
-  inline typename model<T, Size>::param_type
-    model<T, Size>::parameters() const {
+  template<typename T, int Size>
+  inline parameter<model<T, Size>> 
+  model<T, Size>::parameters() const {
+    parameter<model<T, Size>> p;
+    return p;
+  }
 
-    param_type p = param_type::Zero(9 + m_psi.size());
+  template <typename T, int Size>
+  inline typename model<T, Size>::repr_type
+  model<T, Size>::representation() const {
+
+    repr_type p = repr_type::Zero(9 + m_psi.size());
 
     p <<
         m_A[0](0, 0)
@@ -232,7 +244,7 @@ namespace cfp {
   template <typename T, int Size>
   template <recorders::type Recorder>
   inline typename recorder<model<T, Size>, Recorder>::data_type
-    model<T, Size>::emax2(
+    model<T, Size>::emax(
         Eigen::Ref<const data_type> in
       , parameter<model<T, Size>>& out
       , std::size_t maxstep
@@ -242,7 +254,7 @@ namespace cfp {
       model<T, Size>
       , criteria::type::zeroGradientNorm>;
 
-    auto tmp = parameters();
+    auto tmp = representation();
     Eigen::VectorXd dummy = Eigen::VectorXd::Zero(in.size());
     Eigen::Map<Eigen::VectorXd> mdummy(dummy.data(), dummy.size());
     model<T, Size> t = *this;
@@ -542,6 +554,14 @@ namespace cfp {
     );
 
     return model;
+  }
+
+  template<typename T, int Size>
+  inline typename model<T, Size>::data_type model<T, Size>::simulate(std::size_t len, int seed) const {
+
+    auto params = parameters();
+    simulation<model<T, Size>> sim(params, len, seed);
+    return sim.next();
   }
 }
 

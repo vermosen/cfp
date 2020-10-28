@@ -101,11 +101,11 @@ test_that("test.cfp.em.debug", {
   # create 100 simulations of 1 month
   sims <- lapply(X=seq(1, 20), FUN=function(x){ simulate(params, n=26*30, seed=x)})
   
-  dfs <- rbindlist(lapply(X=seq_along(sims), FUN=function(i) {
-    df <- cfp::em(sims[[i]]$param, col=sims[[i]]$data[, y], max.step=500, tol=1e-15, debug=TRUE)
-    df[, sim.id:=i]
-    (df)
-  }))
+      dfs <- rbindlist(lapply(X=seq_along(sims), FUN=function(i) {
+        df <- cfp::em(sims[[i]]$param, col=sims[[i]]$data[, y], max.step=500, tol=1e-15, debug=TRUE)
+        df[, sim.id:=i]
+        (df)
+      }))
   
   res <- last(dfs[, lapply(.SD, mean), by=step])
   

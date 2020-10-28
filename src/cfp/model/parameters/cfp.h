@@ -28,10 +28,6 @@ namespace cfp {
     double m_sig_2 = 0.0;
     double m_r = 0.0;
     std::vector<double> m_psi;
-
-    std::string details() const {
-      return "foobar";
-    }
   };
 }
 

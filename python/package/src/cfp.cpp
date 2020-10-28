@@ -82,7 +82,7 @@ void init_cfp(pybind11::module& m) {
         , double tol) {
           
           cfp::parameter<model_type> out;
-          m.emax2<cfp::recorders::type::none>(in, out, maxstep, tol);
+          m.emax<cfp::recorders::type::none>(in, out, maxstep, tol);
           return out;
         }
       )
@@ -94,7 +94,7 @@ void init_cfp(pybind11::module& m) {
         , double tol) {
           
           cfp::parameter<model_type> out;
-          auto df = m.emax2<cfp::recorders::type::simple>(in, out, maxstep, tol);
+          auto df = m.emax<cfp::recorders::type::simple>(in, out, maxstep, tol);
           
           pybind11::dict d(
               "y"_a     = out

@@ -25,6 +25,8 @@
     <None Include="docs\sphinx\python.rst" />
     <None Include="LICENSE" />
     <None Include="PreLoad.cmake" />
+    <None Include="python\markdown\cfp.Rmd" />
+    <None Include="python\markdown\simulation.Rmd" />
     <None Include="python\package\cfp\cfp.py" />
     <None Include="python\package\cfp\__init__.py" />
     <None Include="python\package\setup.py.in" />
@@ -84,9 +86,6 @@
     <ClInclude Include="src\cfp\math\optimization\solver.h" />
     <ClInclude Include="src\cfp\math\traits\fwd\point.h" />
     <ClInclude Include="src\cfp\math\traits\point.h" />
-    <ClInclude Include="src\cfp\meta\asm\stopwatch.h" />
-    <ClInclude Include="src\cfp\meta\patterns\alias.h" />
-    <ClInclude Include="src\cfp\meta\patterns\factory.h" />
     <ClInclude Include="src\cfp\meta\preprocessor\cat.h" />
     <ClInclude Include="src\cfp\meta\preprocessor\pair.h" />
     <ClInclude Include="src\cfp\meta\preprocessor\sequence.h" />
