@@ -88,9 +88,9 @@ cfp::parameter<cfp::model<double, 2>> em_cfp(
 
   std::size_t nrows = col.size();
   const auto in = Rcpp::as<std::vector<double>>(col);
-  cfp::parameter<cfp::model<double, 2>> out;
-
+  
   cfp::model<double, 2> model(params);
+  cfp::parameter<cfp::model<double, 2>> out;
 
   model.emax<cfp::recorders::type::none>(
     Eigen::Map<const Eigen::VectorXd>(in.data(), in.size())

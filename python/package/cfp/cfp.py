@@ -1,16 +1,12 @@
 import numpy as np
-from ._cfp.cfp import parameters, model
+from ._cfp.cfp import parameters, model, simulate
 
-"""@package cfp.cfp
-Expose the function related to the Chen-Feng_Palomar model
-
-More details.
-"""
-def simulate(p, size=1000):
-  """sample a cfp dynamic
-
-  The function create sample time-series
+def simulate_d(p, size=1000, seed =-1):
   """
+  sample a dynamic wrt. the cfp parameters passed - debug version
+  """
+  np.random.seed(seed)
+
   Qp = np.matrix([[p.s_eta, 0], [0.0, p.s_mu]])
   Ap = np.matrix([[p.a_eta, 0], [0.0, p.a_mu]])
     

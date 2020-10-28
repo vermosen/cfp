@@ -1,3 +1,6 @@
 - add p-value calculations
-- finish C++ simulation function
+- finish C++ simulation function DONE
 - link optimization framework to a lib
+- investigate python emax bug
+- add emax debug mode
+- documentation

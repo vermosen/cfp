@@ -1,13 +1,17 @@
 import unittest
 
-import cfp.cfp
+import cfp
 import numpy as np
 
 class testCfp(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
+
         super(testCfp, self).__init__(*args, **kwargs)
-        p = cfp.cfp.parameters()
+
+        t = 26
+        # create params
+        p = cfp.parameters()
 
         p.a_eta = 1.0
         p.a_mu  = 0.4
@@ -16,11 +20,11 @@ class testCfp(unittest.TestCase):
         p.r     = 0.4
         p.pi    = [0.3, 0.3]
         p.sigma = [0.1, 0.1]
-        p.psi   = [1.0, 1.0, 1.0, 1.0]
+        p.psi   = [1.0] * t
         self.params = p
         p = None
 
-        p = cfp.cfp.parameters()
+        p = cfp.parameters()
         p.a_eta = 0.93970117964
         p.a_mu  = 0.617656427391
         p.s_eta = 0.00611157182105
@@ -47,7 +51,7 @@ class testCfp(unittest.TestCase):
     def test_simulate(self):
 
         np.random.seed(1234)
-        sim = cfp.cfp.simulate(self.params, size=20)
+        sim = cfp.simulate(self.params, size=20)
 
         self.assertAlmostEqual(sim[0 ], 1.89816178       )
         self.assertAlmostEqual(sim[19], 0.877137719126786)
@@ -55,8 +59,8 @@ class testCfp(unittest.TestCase):
     def test_filter(self):
         
         np.random.seed(1234)
-        sim = cfp.cfp.simulate(self.market_params, size=1000)
-        md = cfp.cfp.model(self.market_params)
+        sim = cfp.simulate(self.market_params, size=1000)
+        md = cfp.model(self.market_params)
         kf = md.filter(sim)
 
         self.assertEqual(len(kf), 1000)
@@ -66,8 +70,8 @@ class testCfp(unittest.TestCase):
     def test_smoother(self):
 
         np.random.seed(1234)
-        sim = cfp.cfp.simulate(self.market_params, size=1000)
-        md = cfp.cfp.model(self.market_params)
+        sim = cfp.simulate(self.market_params, size=1000)
+        md = cfp.model(self.market_params)
         sm = md.smoother(sim)
 
         self.assertEqual(len(sm), 1000)
@@ -77,8 +81,8 @@ class testCfp(unittest.TestCase):
     def test_emax(self):
 
         np.random.seed(1234)
-        sim = cfp.cfp.simulate(self.market_params, size=1000)
-        md = cfp.cfp.model(self.market_params)
+        sim = cfp.simulate(self.market_params, size=1000)
+        md = cfp.model(self.market_params)
         res = md.emax(sim, 100, 1e-8)
 
         self.assertAlmostEqual(len(res.psi), 26)
@@ -94,8 +98,8 @@ class testCfp(unittest.TestCase):
     def test_emax_debug(self):
 
         np.random.seed(1234)
-        md = cfp.cfp.model(self.market_params)
-        sim = cfp.cfp.simulate(self.market_params, size=100)
+        md = cfp.model(self.market_params)
+        sim = cfp.simulate(self.market_params, size=100)
         df = md.emax_debug(sim, 10, 1e-10)
 
         self.assertEqual(len(df)              , 36                   )
@@ -109,8 +113,8 @@ class testCfp(unittest.TestCase):
     def test_predict(self):
 
         np.random.seed(1234)
-        sim = cfp.cfp.simulate(self.market_params, size=1000)
-        md = cfp.cfp.model(self.market_params)
+        sim = cfp.simulate(self.market_params, size=1000)
+        md = cfp.model(self.market_params)
         pred = md.predict(data=sim, horizon=10)
 
         self.assertEqual(len(pred), 1000)

@@ -6,6 +6,7 @@
 
 namespace cfp {
 
+  // TODO: provide partial spec for Dim == 1
   template <
       typename Scalar
     , int Dim

@@ -5,7 +5,7 @@
 #include <vector>
 #include <ostream>
 
-#include <cfp/model/parameter.h>
+#include <cfp/model/parameters/base.h>
 
 #include <cfp/model.h>
 
@@ -15,9 +15,14 @@
 
 namespace cfp {
 
+  // TODO: push the data in parameters::base and design accessors instead
   template<>
-  struct parameter<model<double, 2>> {
-    parameter() {}
+  struct parameter<model<double, 2>> : public parameters::base<parameter<model<double, 2>>> {
+    
+    parameter() = default;
+    parameter(const parameter&) = default;
+    parameter& operator =(const parameter&) = default;
+
     double m_a_eta = 0.0;
     double m_a_mu = 0.0;
     double m_s_eta = 0.0;

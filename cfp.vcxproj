@@ -76,6 +76,7 @@
     <ClInclude Include="src\cfp\fwd\model.h" />
     <ClInclude Include="src\cfp\math\distribution\details\gauss.h" />
     <ClInclude Include="src\cfp\math\distribution\gaussian_mult.h" />
+    <ClInclude Include="src\cfp\math\models\base.h" />
     <ClInclude Include="src\cfp\math\optimization\criteria\zerogradientnorm.h" />
     <ClInclude Include="src\cfp\math\optimization\criterion.h" />
     <ClInclude Include="src\cfp\math\optimization\norm.h" />
@@ -95,6 +96,7 @@
     <ClInclude Include="src\cfp\model.h" />
     <ClInclude Include="src\cfp\model\caches\cfp.h" />
     <ClInclude Include="src\cfp\model\parameter.h" />
+    <ClInclude Include="src\cfp\model\parameters\base.h" />
     <ClInclude Include="src\cfp\model\parameters\cfp.h" />
     <ClInclude Include="src\cfp\model\recorder.h" />
     <ClInclude Include="src\cfp\model\recorders\cfp.h" />

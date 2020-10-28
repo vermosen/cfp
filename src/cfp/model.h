@@ -67,7 +67,7 @@ namespace cfp {
     void filter(Eigen::Ref<const data_type> in, Eigen::Ref<data_type> out);
     void predict(Eigen::Ref<const data_type> in, std::size_t steps, Eigen::Ref<data_type> out);
     void smoother(Eigen::Ref<const data_type> in, Eigen::Ref<data_type> out);
-    model::data_type simulate(std::size_t len, int seed) const;
+    model::data_type simulate(std::size_t len, int seed) const; // put in base class
       
     template<recorders::type Type>
     typename recorder<model<T, Size>, Type>::data_type emax(
@@ -79,7 +79,7 @@ namespace cfp {
     void filter_impl(
         Eigen::Ref<const data_type> in
       , Eigen::Ref<data_type> out
-      , std::optional<cache_type>& c);
+      , std::optional<cache_type>& c); // TODO: remove use of optional
 
     void predict_impl(
         Eigen::Ref<const data_type> in
@@ -178,15 +178,30 @@ namespace cfp {
     , const vcol_type& pi
     , const matrix_type& sigma
     , double r)
-    : m_A{ Ap, An }
-    , m_Q{ Qp, Qn }
+    : m_A { Ap, An }
+    , m_Q { Qp, Qn }
     , m_psi(psi), m_pi(pi)
     , m_sigma(sigma), m_r(r) {}
 
   template<typename T, int Size>
   inline parameter<model<T, Size>> 
   model<T, Size>::parameters() const {
+
     parameter<model<T, Size>> p;
+
+    p.m_a_eta =  m_A[0](0, 0);
+    p.m_a_mu  =  m_A[0](1, 1);
+    p.m_s_eta =  m_Q[0](0, 0);
+    p.m_s_mu  =  m_Q[0](1, 1);
+    p.m_pi_1  =    m_pi(0, 0);
+    p.m_pi_2  =    m_pi(1, 0);
+    p.m_sig_1 = m_sigma(0, 0);
+    p.m_sig_2 = m_sigma(1, 1);
+    p.m_r     =     m_r      ;
+
+    p.m_psi = std::vector<double>(m_psi.data()
+      , m_psi.data() + m_psi.rows() * m_psi.cols());
+
     return p;
   }
 

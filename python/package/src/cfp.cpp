@@ -4,17 +4,41 @@
 #include <pybind11/stl.h>
 #include <pybind11/eigen.h>
 
+#include <cfp/model/simulations/cfp.h>
 #include <cfp/model.h>
 
 using namespace pybind11::literals;
+
+using model_type = cfp::model<double, 2>;
+using param_type = cfp::parameter<model_type>;
+using data_type = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+
+namespace cfp {
+
+  data_type simulate(const param_type& params, std::int64_t size, int seed) {
+
+    if (seed == -1) {
+      std::random_device rng;
+      seed = rng();
+    }
+
+    model_type md(params);
+    auto result = md.simulate(size, seed);
+    return result;
+  }
+}
 
 void init_cfp(pybind11::module& m) {
 
   auto sub = m.def_submodule("cfp");
 
-  using model_type = cfp::model<double, 2>;
-  using param_type = cfp::parameter<model_type>;
-  using data_type  = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+  sub.def(
+      "simulate"
+    , &cfp::simulate
+    , pybind11::arg("params")
+    , pybind11::arg("size")
+    , pybind11::arg("seed") = -1
+    , pybind11::return_value_policy::move);
 
   pybind11::class_<param_type>(sub, "parameters")
     .def(pybind11::init<>())
@@ -79,15 +103,18 @@ void init_cfp(pybind11::module& m) {
       .def("emax", [](model_type& m
         , Eigen::Ref<const data_type> in
         , std::size_t maxstep
-        , double tol) {
+        , double tol) -> param_type {
           
-          cfp::parameter<model_type> out;
+          param_type out;
           m.emax<cfp::recorders::type::none>(in, out, maxstep, tol);
           return out;
         }
+      , pybind11::arg("data")
+      , pybind11::arg("maxstep")
+      , pybind11::arg("tol")
       )
       // TODO: find a way to hide this function 
-      // and call using some polymorphic override in py
+      // and call using some polymorphic override from python ?
       .def("emax_debug", [](model_type& m
         , Eigen::Ref<const data_type> in
         , std::size_t maxstep
@@ -116,6 +143,9 @@ void init_cfp(pybind11::module& m) {
 
           return d;
         }
+        , pybind11::arg("data")
+        , pybind11::arg("maxstep")
+        , pybind11::arg("tol")
       )
       .def("predict", [](model_type& m
         , Eigen::Ref<const data_type> in
@@ -124,7 +154,8 @@ void init_cfp(pybind11::module& m) {
           m.predict(in, hrz, out);
           return out;
         }
-      , pybind11::arg("data"), pybind11::arg("horizon")
+      , pybind11::arg("data")
+      , pybind11::arg("horizon")
       )
       ;
 }
