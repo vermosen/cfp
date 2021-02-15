@@ -41,51 +41,6 @@ test_that("test.simulate.model", {
   expect_equal(sim$data[.N, y], 0.7165439278, tolerance=tol);
 })
 
-test_that("test.kalman.filter", {
-  
-  params <- cfp.model.parameters(
-      pi=c(1.0, 1.0)
-    , s1=c(1.0, 1.0)
-  )
-  
-  sim <- simulate(params, n=1000, seed=1234)
-  sim$data[, f.yhat:= kalman(params, y, smooth=FALSE)]
-  expect_equal(sim$data[.N, f.yhat], 0.727699456264327, tolerance=tol);
-})
-
-test_that("test.kalman.smoother", {
-  
-  params <- cfp.model.parameters(
-    pi=c(1.0, 1.0)
-    , s1=c(1.0, 1.0)
-  )
-  
-  sim <- simulate(params, n=1000, seed=1234)
-  sim$data[, s.yhat:= kalman(params, y, smooth=TRUE)]
-  expect_equal(sim$data[1, s.yhat], 2.83643101423741, tolerance=tol);
-})
-
-test_that("test.cfp.profile", {
-  
-  x = seq(-1, 1, length.out = 26);
-  
-  params <- cfp.model.parameters(
-      a.mu  = 0.3
-    , a.eta = 0.3
-    , s.eta = 1.0
-    , s.mu  = 1e-4
-    , psi   = x ^ 2.0 / 5.0
-    , pi    = c(1.0, 1.0)
-    , s1    = c(1.0, 1.0)
-    , r     = 0.1)
-  
-  sim <- simulate(params, n=400, seed=1234)
-  sim$data[, s.yhat:= kalman(params, y, smooth=TRUE)]
-  sim$data[, f.yhat:= kalman(params, y, smooth=FALSE)]
-  expect_equal(sim$data[1, s.yhat], 2.888115171, tolerance=tol);
-  expect_equal(sim$data[.N, f.yhat], 0.4111250662, tolerance=tol);
-})
-
 test_that("test.cfp.em.debug", {
   
   params <- cfp.model.parameters(

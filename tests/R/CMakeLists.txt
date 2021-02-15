@@ -10,3 +10,15 @@ add_r_test(
 	MODULE cfp 
 	WORKING_DIRECTORY ${PACKAGE_DIR}/cfp
 )
+
+add_r_test(
+	FILE simulate
+	MODULE cfp
+	WORKING_DIRECTORY ${PACKAGE_DIR}/cfp
+)
+
+add_r_test(
+	FILE kalman
+	MODULE cfp
+	WORKING_DIRECTORY ${PACKAGE_DIR}/cfp
+)

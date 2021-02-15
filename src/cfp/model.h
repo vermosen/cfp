@@ -64,14 +64,18 @@ namespace cfp {
     ); // TODO instead: model(repr_type)
 
   public:
-    void filter(Eigen::Ref<const data_type> in, Eigen::Ref<data_type> out);
+
+    template<recorders::type Type = recorders::type::none>
+    void /* typename recorder<model<T, Size>, Type>::data_type  */
+    filter(Eigen::Ref<const data_type> in, Eigen::Ref<data_type> out);
+    
     void predict(Eigen::Ref<const data_type> in, std::size_t steps, Eigen::Ref<data_type> out);
     void smoother(Eigen::Ref<const data_type> in, Eigen::Ref<data_type> out);
     model::data_type simulate(std::size_t len, int seed) const; // put in base class
       
-    template<recorders::type Type>
-    typename recorder<model<T, Size>, Type>::data_type emax(
-        Eigen::Ref<const data_type> in
+    template<recorders::type Type = recorders::type::none>
+    typename recorder<model<T, Size>, Type>::data_type 
+    emax(Eigen::Ref<const data_type> in
       , parameter<model<T, Size>>& out
       , std::size_t nstep, double tol);
 
@@ -228,11 +232,21 @@ namespace cfp {
   }
 
   template <typename T, int Size>
-  inline void model<T, Size>::filter(
+  template <recorders::type Type>
+  inline void /* typename recorder<model<T, Size>, Type>::data_type */
+  model<T, Size>::filter(
       Eigen::Ref<const data_type> in
     , Eigen::Ref<data_type> out) {
+
     std::optional<cache_type> c = std::nullopt;
-    return filter_impl(in, out, c);
+
+    filter_impl(in, out, c);
+
+    if constexpr (!(Type == recorders::type::none)) {
+      // TODO
+    } else {
+
+    }
   }
 
   template <typename T, int Size>
@@ -247,7 +261,9 @@ namespace cfp {
   }
 
   template <typename T, int Size>
-  inline void model<T, Size>::smoother(
+  /*template <recorders::type Recorder>*/
+  inline void /*typename recorder<model<T, Size>::data_type*/ 
+  model<T, Size>::smoother(
       Eigen::Ref<const data_type> in
     , Eigen::Ref<data_type> out) {
 

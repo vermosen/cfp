@@ -6,18 +6,20 @@ find_package(pybind11 REQUIRED
 	HINTS ${CONAN_PYBIND11_ROOT}/share/cmake/pybind11
 )
 
-import_python(HINT ${PYTHON_LOCATION_HINT}/bin)
+import_python(HINT ${PYTHON_LOCATION_HINT})
+
+file(GLOB_RECURSE MODULE_HEADERS CONFIGURE_DEPENDS *.h)
+file(GLOB_RECURSE MODULE_SOURCES CONFIGURE_DEPENDS *.cpp)
 
 pybind11_add_module(${TARGET_NAME} MODULE 
-	module.cpp
-	cfp.h cfp.cpp
+	${MODULE_HEADERS} ${MODULE_SOURCES}
 )
 
 target_link_libraries(${TARGET_NAME} PUBLIC cfp)
 
 install(
 	TARGETS ${TARGET_NAME}
-	LIBRARY DESTINATION ${INSTALL_LIB_DIR}/python/cfp
+	LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_SUFFIX}/python/cfp
 )
 
 add_custom_command(TARGET _cfp

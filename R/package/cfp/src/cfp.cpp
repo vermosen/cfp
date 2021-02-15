@@ -13,7 +13,7 @@ using param_type = cfp::parameter<cfp::model<double, 2>>;
 RCPP_EXPOSED_CLASS_NODECL(param_type)
 
 Rcpp::NumericVector simulate_cfp(
-    const cfp::parameter<cfp::model<double, 2>>& p
+    const param_type& p
   , std::size_t n, int seed) {
 
   auto model = cfp::model<double, 2>(p);
@@ -34,9 +34,34 @@ Rcpp::NumericVector filter_cfp(
   model.filter(
       Eigen::Map<const Eigen::VectorXd>(in.data(), in.size())
     , Eigen::Map<Eigen::VectorXd>(out.data(), out.size())
-    );
+  );
 
   return Rcpp::wrap(out);
+}
+
+Rcpp::DataFrame filter_cfp_debug(
+    const param_type& params
+  , const Rcpp::NumericVector& col) {
+
+  throw std::logic_error("not implemented!");
+
+  std::size_t n = col.size();
+  const auto in = Rcpp::as<std::vector<double>>(col);
+  std::vector<double> out(n, NAN);
+
+  cfp::model<double, 2> model(params);
+
+  model.filter(
+      Eigen::Map<const Eigen::VectorXd>(in.data(), in.size())
+    , Eigen::Map<Eigen::VectorXd>(out.data(), out.size())
+  );
+
+  Rcpp::DataFrame result = Rcpp::DataFrame::create(
+      Rcpp::_("y") = col
+    , Rcpp::_("filter") = out
+  );
+
+  return result;
 }
 
 Rcpp::NumericVector smoother_cfp(
@@ -55,6 +80,31 @@ Rcpp::NumericVector smoother_cfp(
     );
 
   return Rcpp::wrap(out);
+}
+
+Rcpp::DataFrame smoother_cfp_debug(
+    const param_type& params
+  , const Rcpp::NumericVector& col) {
+
+  throw std::logic_error("not implemented!");
+
+  std::size_t n = col.size();
+  const auto in = Rcpp::as<std::vector<double>>(col);
+  std::vector<double> out(n, NAN);
+
+  cfp::model<double, 2> model(params);
+
+  model.smoother(
+      Eigen::Map<const Eigen::VectorXd>(in.data(), in.size())
+    , Eigen::Map<Eigen::VectorXd>(out.data(), out.size())
+    );
+
+  Rcpp::DataFrame result = Rcpp::DataFrame::create(
+      Rcpp::_("y") = col
+    , Rcpp::_("filter") = out
+  );
+
+  return result;
 }
 
 Rcpp::NumericVector predict_cfp(
@@ -191,7 +241,9 @@ RCPP_MODULE(cfp_module) {
 
   Rcpp::function("simulate_cfp", &simulate_cfp );
   Rcpp::function("filter_cfp"  , &filter_cfp   );
+  Rcpp::function("filter_cfp_debug", &filter_cfp_debug);
   Rcpp::function("smoother_cfp", &smoother_cfp );
+  Rcpp::function("smoother_cfp_debug", &smoother_cfp_debug);
   Rcpp::function("predict_cfp" , &predict_cfp  );
   Rcpp::function("em_cfp"      , &em_cfp       );
   Rcpp::function("em_cfp_debug", &em_cfp_debug );

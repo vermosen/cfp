@@ -5,6 +5,10 @@ predict <- function(x, ...) UseMethod("predict")
 simulate <- function(x, ...) UseMethod("simulate")
 
 #' @export
+simulate2 <- function(x, ...) UseMethod("simulate2")
+
+
+#' @export
 kalman <- function(x, ...) UseMethod("kalman")
 
 #' @export
@@ -26,7 +30,7 @@ cfp.model.parameters <- function(
     a.eta = 0.3
   , a.mu  = 0.3
   , s.eta = 1e-4
-  , s.mu  = 1e-4
+  , s.mu  = 1.0
   , psi=c(1.0, 1.0, 1.0, 1.0)
   , pi = NULL
   , s1 = NULL
@@ -155,14 +159,25 @@ simulate.Rcpp_cfp_parameters <- function(params, n=1000, seed=Sys.time(), debug=
 #' @rdname kalman	
 #' @param param a parameters object
 #' @param col a data.frame column
-#' @param smooth compute the smoother as well
+#' @param smooth returns the smoother instead of the filter 
+#' @param debug produces debugging information
 #' @export
-kalman.Rcpp_cfp_parameters <- function(params, col, smooth=FALSE) {
+kalman.Rcpp_cfp_parameters <- function(params, col, smooth=FALSE, debug=FALSE) {
 
     if (smooth) {
-		(smoother_cfp(params, col));
+      if (debug) {
+        return (FALSE)
+        #return (smoother_cfp_debug(params, col));
+      } else {
+        return (smoother_cfp(params, col));
+      }
 	} else {
-		(filter_cfp(params, col));
+    if (debug) {
+      return (FALSE)
+      #return (filter_cfp_debug(params, col));
+    } else {
+      return (filter_cfp(params, col));
+    }	
 	}
 }
 
@@ -200,7 +215,8 @@ em.Rcpp_cfp_parameters <- function(param, col, max.step=30, tol=1e-9, debug=FALS
 #' @param params a cfp.model.parameters object
 #' @param n the size of the simulation to generate
 #' @param seed the seed of the simulation
+#' @rdname simulate2
 #' @export
-sim.cfp.2 <- function(sim, n=1000, seed=Sys.time()) {
+simulate2.Rcpp_cfp_parameters <- function(params, n=1000, seed=Sys.time()) {
     (simulate_cfp(params, n, seed));
 }

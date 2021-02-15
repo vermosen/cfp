@@ -66,6 +66,7 @@ load_packages(
 	NAME ${PACKAGES}
 	PROFILE ${CONAN_PROFILE}
 	SETTINGS ${CONAN_EXTRA_SETTINGS}
+	OPTIONS ""
 	UPDATE
 )
 
@@ -108,4 +109,4 @@ endif()
 # add the test suite to the project #
 #####################################
 
-add_testsuite(DIRECTORY test)
+add_testsuite(DIRECTORY tests)

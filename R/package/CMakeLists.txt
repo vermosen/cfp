@@ -15,7 +15,7 @@ get_current_date(
 
 # TODO: function to retrieve the core count
 include(ProcessorCount)
-ProcessorCount(N)
+ProcessorCount(NCORES)
 
 set(PKG_BUILD_ROOT "${CMAKE_CURRENT_BINARY_DIR}/build/cfp")
 message(DEBUG "PKG_BUILD_ROOT set to: ${PKG_BUILD_ROOT}")
@@ -68,16 +68,16 @@ configure_file(
 
 # set the package files (note: we assume no subdirectory)
 file(GLOB_RECURSE TARGET_HEADERS	CONFIGURE_DEPENDS "src/*.h" "inst/include/*.h"	)
-file(GLOB_RECURSE TARGET_SOURCES	CONFIGURE_DEPENDS "src/*.cpp"					)
-file(GLOB_RECURSE R_SOURCES			CONFIGURE_DEPENDS "R/*.R"						)
-file(GLOB_RECURSE TEST_FILES		CONFIGURE_DEPENDS "tests/testthat/*.R"			)
-file(GLOB_RECURSE MAN_FILES			CONFIGURE_DEPENDS "man/*.Rd"					)
+file(GLOB_RECURSE TARGET_SOURCES	CONFIGURE_DEPENDS "src/*.cpp"										)
+file(GLOB_RECURSE R_SOURCES			  CONFIGURE_DEPENDS "R/*.R"												)
+file(GLOB_RECURSE TEST_FILES		  CONFIGURE_DEPENDS "tests/testthat/*.R"					)
+file(GLOB_RECURSE MAN_FILES			  CONFIGURE_DEPENDS "man/*.Rd"										)
 
 set(CPP_SOURCES "${TARGET_HEADERS};${TARGET_SOURCES}")
 message(DEBUG "cfp C++ sources found: ${CPP_SOURCES}")
 
 add_custom_target(
-	createSkeleton ALL
+	createSkeleton
     COMMAND ${CMAKE_COMMAND} -E copy_directory 
 	${CMAKE_CURRENT_SOURCE_DIR}/cfp/R ${PKG_BUILD_ROOT}/R
 	COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -89,7 +89,7 @@ add_custom_target(
 )
 
 add_custom_target(
-	refreshTimestamps ALL
+	refreshTimestamps
     COMMAND ${CMAKE_COMMAND} -E env
 	sh -c "touch ${PKG_BUILD_ROOT}/src/RcppExports.cpp"
 	COMMAND ${CMAKE_COMMAND} -E env
@@ -98,7 +98,7 @@ add_custom_target(
 )
 
 add_custom_target(
-	compileAttributeRcpp ALL
+	compileAttributeRcpp
     COMMAND ${CMAKE_COMMAND} -E env "MAKE=${DEVTOOLS_ROOT}/bin/make -j${NCORES}" 
 	${R_EXEC} -e "library(Rcpp);Rcpp::compileAttributes(pkgdir='.',TRUE)" #${SINK}
     WORKING_DIRECTORY ${PKG_BUILD_ROOT}
@@ -107,7 +107,7 @@ add_custom_target(
 )
 
 # build the lib and the documentation
-add_custom_target(buildDocumentation ALL
+add_custom_target(roxygenExport
 	COMMAND ${CMAKE_COMMAND} -E env "MAKE=${DEVTOOLS_ROOT}/bin/make -j${NCORES}" 
 	"PATH=${R_LOCATION_HINT}/bin:$ENV{PATH}"
 	${R_EXEC} -e "library(roxygen2);roxygen2::roxygenize()" #${SINK}
@@ -122,6 +122,6 @@ add_custom_target(installPackage ALL
 	"PATH=${R_LOCATION_HINT}/bin:$ENV{PATH}"
 	${R_EXEC} -e "library(devtools);devtools::install(build=FALSE, dependencies=FALSE)" #${SINK}
 	WORKING_DIRECTORY ${PKG_BUILD_ROOT}
-	DEPENDS buildDocumentation
+	DEPENDS roxygenExport
 	VERBATIM
 )
