@@ -58,10 +58,11 @@ namespace cfp {
     bool filled = false;
 
     do {
-      std::optional<typename model<T, Size>::cache_type> c(data.size());   // whipe the cache on every iteration
-      it.filter_impl(data, Eigen::Ref<data_type>(dummy), c);
-      it.smoother_impl(data, Eigen::Ref<data_type>(dummy), *c);
-      model<T, Size> res = it.emax_impl(data, *c);
+      using cache_type = typename traits::cache<model<T, Size>, caches::type::simple>::type;
+      cache_type c(data.size());                                            // whipe the cache on every iteration
+      it.template filter_impl<caches::type::simple>(data, Eigen::Ref<data_type>(dummy), c);
+      it.template smoother_impl<caches::type::simple>(data, Eigen::Ref<data_type>(dummy), c);
+      model<T, Size> res = it.template emax_impl<caches::type::simple>(data, c);
       auto params = res.representation();
       filled = cr.template apply(it.representation() - params);
       rec.record(params);

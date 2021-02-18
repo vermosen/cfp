@@ -3,7 +3,7 @@
 #define CFP_MODEL_CACHE_H
 
 namespace cfp    {
-namespace caches  {
+namespace caches {
 
   enum class type {
       simple = 1

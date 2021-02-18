@@ -10,12 +10,12 @@
 #include <cfp/math/optimization/solvers/base.h>
 #include <cfp/math/optimization/criteria/zerogradientnorm.h>
 
-#include <cfp/model/cache.h>
 #include <cfp/model/recorder.h>
 #include <cfp/model/caches/cfp.h>
 #include <cfp/model/parameters/cfp.h>
 
 #include <cfp/traits/model.h>
+#include <cfp/traits/cache.h>
 
 #include <cfp/model/solvers/cfp/simple.h>
 #include <cfp/model/recorders/cfp.h>
@@ -33,7 +33,6 @@ namespace cfp {
     using vcol_type   = Eigen::Matrix<T, Size, 1>;
     using data_type   = Eigen::Matrix<T, Eigen::Dynamic, 1>;
     using solver_type = solver<model<T, Size>, solvers::type::simple>;
-    using cache_type  = cache<model<T, Size>, caches::type::simple>;
 
   public:
     using repr_type = Eigen::Matrix<T, Eigen::Dynamic, 1>;
@@ -65,10 +64,7 @@ namespace cfp {
 
   public:
 
-    template<recorders::type Type = recorders::type::none>
-    void /* typename recorder<model<T, Size>, Type>::data_type  */
-    filter(Eigen::Ref<const data_type> in, Eigen::Ref<data_type> out);
-    
+    void filter(Eigen::Ref<const data_type> in, Eigen::Ref<data_type> out);
     void predict(Eigen::Ref<const data_type> in, std::size_t steps, Eigen::Ref<data_type> out);
     void smoother(Eigen::Ref<const data_type> in, Eigen::Ref<data_type> out);
     model::data_type simulate(std::size_t len, int seed) const; // put in base class
@@ -80,25 +76,29 @@ namespace cfp {
       , std::size_t nstep, double tol);
 
   private:
+    template <caches::type C>
     void filter_impl(
         Eigen::Ref<const data_type> in
       , Eigen::Ref<data_type> out
-      , std::optional<cache_type>& c); // TODO: remove use of optional
+      , typename traits::cache<model<T, Size>, C>::type& c); // TODO: remove use of optional
 
+    template <caches::type C>
     void predict_impl(
         Eigen::Ref<const data_type> in
       , int steps
       , Eigen::Ref<data_type> out
-      , cache_type& c);
+      , typename traits::cache<model<T, Size>, C>::type& c);
 
+    template <caches::type C>
     void smoother_impl(
         Eigen::Ref<const data_type> in
       , Eigen::Ref<data_type> out
-      , cache_type& cache);
+      , typename traits::cache<model<T, Size>, C>::type& c);
 
+    template <caches::type C>
     model<T, Size> emax_impl(
         Eigen::Ref<const data_type> in
-      , cache_type& cache);
+      , typename traits::cache<model<T, Size>, C>::type& c);
 
     // solver interface. TODO: push in base class
   private:
@@ -232,21 +232,12 @@ namespace cfp {
   }
 
   template <typename T, int Size>
-  template <recorders::type Type>
-  inline void /* typename recorder<model<T, Size>, Type>::data_type */
-  model<T, Size>::filter(
+  inline void model<T, Size>::filter(
       Eigen::Ref<const data_type> in
     , Eigen::Ref<data_type> out) {
 
-    std::optional<cache_type> c = std::nullopt;
-
-    filter_impl(in, out, c);
-
-    if constexpr (!(Type == recorders::type::none)) {
-      // TODO
-    } else {
-
-    }
+    auto opt = std::nullopt;
+    filter_impl<caches::type::none>(in, out, opt);
   }
 
   template <typename T, int Size>
@@ -255,21 +246,23 @@ namespace cfp {
     , std::size_t steps
     , Eigen::Ref<data_type> out) {
 
-    std::optional<cache_type> c(in.size());
-    filter_impl(in, out, c);
-    predict_impl(in, static_cast<int>(steps), out, *c);
+    using cache_type = typename traits::cache<model<T, Size>, caches::type::simple>::type;
+
+    cache_type c(in.size());
+    filter_impl<caches::type::simple>(in, out, c);
+    predict_impl<caches::type::simple>(in, static_cast<int>(steps), out, c);
   }
 
   template <typename T, int Size>
-  /*template <recorders::type Recorder>*/
-  inline void /*typename recorder<model<T, Size>::data_type*/ 
-  model<T, Size>::smoother(
+  inline void model<T, Size>::smoother(
       Eigen::Ref<const data_type> in
     , Eigen::Ref<data_type> out) {
 
-    std::optional<cache_type> c(in.size());
-    filter_impl(in, out, c);
-    smoother_impl(in, out, *c);
+    using cache_type = typename traits::cache<model<T, Size>, caches::type::simple>::type;
+
+    cache_type c(in.size());
+    filter_impl<caches::type::simple>(in, out, c);
+    smoother_impl<caches::type::simple>(in, out, c);
   }
 
   template <typename T, int Size>
@@ -315,10 +308,11 @@ namespace cfp {
   }
 
   template<typename T, int Size>
+  template <caches::type C>
   inline void model<T, Size>::filter_impl(
       Eigen::Ref<const data_type> in
     , Eigen::Ref<data_type> out
-    , std::optional<cache_type>& c) {
+    , typename traits::cache<model<T, Size>, C>::type& c) {
 
     int period = m_psi.size();
 
@@ -332,9 +326,9 @@ namespace cfp {
 
     for (int i = 0; i < out.size(); i++) {
 
-      if (c) {
-        c->m_cmeans.push_back(cm);
-        c->m_ccovs.push_back(cc);
+      if constexpr (C == caches::type::simple) {
+        c.m_cmeans.push_back(cm);
+        c.m_ccovs.push_back(cc);
       }
 
       int pos = (int)(i % period != 0);
@@ -347,10 +341,10 @@ namespace cfp {
       gain = (pc * m_c.transpose()) / (m_c * pc * m_c.transpose() + m_r);
 
       // TODO: use constexpr here
-      if (c) {
-        c->m_pmeans.push_back(pm);
-        c->m_pcovs.push_back(pc);
-        c->m_gains.push_back(gain);
+      if constexpr (C == caches::type::simple) {
+        c.m_pmeans.push_back(pm);
+        c.m_pcovs.push_back(pc);
+        c.m_gains.push_back(gain);
       }
 
       if (i < out.size() - 1) {                                                     // not on the last op
@@ -361,20 +355,21 @@ namespace cfp {
       }
     }
 
-    if (c) {                                                                        // t + 1 entries used for the filter
-      c->m_cmeans.push_back(cm);
-      c->m_ccovs.push_back(cc);
+    if constexpr (C == caches::type::simple) {                                      // t + 1 entries used for the filter
+      c.m_cmeans.push_back(cm);
+      c.m_ccovs.push_back(cc);
     }
 
     return;
   }
 
   template <typename T, int Size>
+  template <caches::type C>
   inline void model<T, Size>::predict_impl(
-      Eigen::Ref<const data_type> in
+      Eigen::Ref<const typename model<T, Size>::data_type> in
     , int steps
-    , Eigen::Ref<data_type> out
-    , cache_type& c) {
+    , Eigen::Ref<typename model<T, Size>::data_type> out
+    , typename traits::cache<model<T, Size>, C>::type& c) {
 
     int t = in.size();
     int period = m_psi.size();
@@ -396,10 +391,11 @@ namespace cfp {
   }
 
   template<typename T, int Size>
+  template <caches::type C>
   inline void model<T, Size>::smoother_impl(
-      Eigen::Ref<const data_type> in
-    , Eigen::Ref<data_type> out
-    , cache_type& c) {
+      Eigen::Ref<const typename model<T, Size>::data_type> in
+    , Eigen::Ref<typename model<T, Size>::data_type> out
+    , typename traits::cache<model<T, Size>, C>::type& c) {
 
     std::size_t t = in.size();
     int period = m_psi.size();
@@ -439,9 +435,10 @@ namespace cfp {
   }
 
   template<typename T, int Size>
+  template <caches::type C>
   inline model<T, Size> model<T, Size>::emax_impl(
-    Eigen::Ref<const data_type> in
-    , cache_type& c) {
+      Eigen::Ref<const typename model<T, Size>::data_type> in
+    , typename traits::cache<model<T, Size>, C>::type& c) {
 
     matrix_type p, pcor, ccor;
 
