@@ -4,3 +4,4 @@
 - investigate python emax bug
 - add emax debug mode
 - documentation
+- make cache a constexpr member instead of optional 

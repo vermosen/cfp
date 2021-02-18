@@ -4,4 +4,5 @@ set(PYTHONPATH_TESTSUITE "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_SUFFIX}/pyth
 message(DEBUG "PYTHONPATH_TESTSUITE set to ${PYTHONPATH_TESTSUITE}")
 
 add_subdirectory(cfp)
+add_subdirectory(pycalc)
 add_subdirectory(package)

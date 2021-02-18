@@ -6,4 +6,4 @@
 
 void init_cfp(pybind11::module&);
 
-#endif
+#endif // CFP_WRAPPER_CFP

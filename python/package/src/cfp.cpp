@@ -30,7 +30,7 @@ namespace cfp {
 
 void init_cfp(pybind11::module& m) {
 
-  auto sub = m.def_submodule("cfp");
+  auto sub = m.def_submodule("core");
 
   sub.def(
       "simulate"
@@ -84,78 +84,78 @@ void init_cfp(pybind11::module& m) {
     )
     ;
 
-    pybind11::class_<model_type>(sub, "model")
-      .def(pybind11::init<const param_type&>())
-      .def("filter", [](model_type& m, Eigen::Ref<const data_type> in) {
-          data_type out = data_type::Constant(in.size(), NAN);
-          m.filter(in, out);
-          return out;
+  pybind11::class_<model_type>(sub, "model")
+    .def(pybind11::init<const param_type&>())
+    .def("filter", [](model_type& m, Eigen::Ref<const data_type> in) {
+        data_type out = data_type::Constant(in.size(), NAN);
+        m.filter(in, out);
+        return out;
+      }
+    , pybind11::arg("data")
+    )
+    .def("smoother", [](model_type& m, Eigen::Ref<const data_type> in) {
+        data_type out = data_type::Constant(in.size(), NAN);
+        m.smoother(in, out);
+        return out;
+      }
+    , pybind11::arg("data")
+    )
+    .def("emax", [](model_type& m
+      , Eigen::Ref<const data_type> in
+      , std::size_t maxstep
+      , double tol) -> param_type {
+        
+        param_type out;
+        m.emax<cfp::recorders::type::none>(in, out, maxstep, tol);
+        return out;
+      }
+    , pybind11::arg("data")
+    , pybind11::arg("maxstep")
+    , pybind11::arg("tol")
+    )
+    // TODO: find a way to hide this function 
+    // and call using some polymorphic override from python ?
+    .def("emax_debug", [](model_type& m
+      , Eigen::Ref<const data_type> in
+      , std::size_t maxstep
+      , double tol) {
+        
+        cfp::parameter<model_type> out;
+        auto df = m.emax<cfp::recorders::type::simple>(in, out, maxstep, tol);
+        
+        pybind11::dict d(
+            "y"_a     = out
+          , "a.eta"_a = df[0]
+          , "a.mu"_a  = df[1]
+          , "s.eta"_a = df[2]
+          , "s.mu"_a  = df[3]
+          , "pi.1"_a  = df[4]
+          , "pi.2"_a  = df[5]
+          , "sig.1"_a = df[6]
+          , "sig.2"_a = df[7]
+          , "r"_a     = df[8]
+        );
+
+        for (std::size_t i = 0; i < df.size() - 9; i++) {
+          std::stringstream ss; ss << "psi." << i;
+          d[ss.str().c_str()] = df[i + 9];
         }
-      , pybind11::arg("data")
-      )
-      .def("smoother", [](model_type& m, Eigen::Ref<const data_type> in) {
-          data_type out = data_type::Constant(in.size(), NAN);
-          m.smoother(in, out);
-          return out;
-        }
-      , pybind11::arg("data")
-      )
-      .def("emax", [](model_type& m
-        , Eigen::Ref<const data_type> in
-        , std::size_t maxstep
-        , double tol) -> param_type {
-          
-          param_type out;
-          m.emax<cfp::recorders::type::none>(in, out, maxstep, tol);
-          return out;
-        }
+
+        return d;
+      }
       , pybind11::arg("data")
       , pybind11::arg("maxstep")
       , pybind11::arg("tol")
-      )
-      // TODO: find a way to hide this function 
-      // and call using some polymorphic override from python ?
-      .def("emax_debug", [](model_type& m
-        , Eigen::Ref<const data_type> in
-        , std::size_t maxstep
-        , double tol) {
-          
-          cfp::parameter<model_type> out;
-          auto df = m.emax<cfp::recorders::type::simple>(in, out, maxstep, tol);
-          
-          pybind11::dict d(
-              "y"_a     = out
-            , "a.eta"_a = df[0]
-            , "a.mu"_a  = df[1]
-            , "s.eta"_a = df[2]
-            , "s.mu"_a  = df[3]
-            , "pi.1"_a  = df[4]
-            , "pi.2"_a  = df[5]
-            , "sig.1"_a = df[6]
-            , "sig.2"_a = df[7]
-            , "r"_a     = df[8]
-          );
-
-          for (std::size_t i = 0; i < df.size() - 9; i++) {
-            std::stringstream ss; ss << "psi." << i;
-            d[ss.str().c_str()] = df[i + 9];
-          }
-
-          return d;
-        }
-        , pybind11::arg("data")
-        , pybind11::arg("maxstep")
-        , pybind11::arg("tol")
-      )
-      .def("predict", [](model_type& m
-        , Eigen::Ref<const data_type> in
-        , std::size_t hrz) {
-          data_type out = data_type::Constant(in.size(), NAN);
-          m.predict(in, hrz, out);
-          return out;
-        }
-      , pybind11::arg("data")
-      , pybind11::arg("horizon")
-      )
-      ;
+    )
+    .def("predict", [](model_type& m
+      , Eigen::Ref<const data_type> in
+      , std::size_t hrz) {
+        data_type out = data_type::Constant(in.size(), NAN);
+        m.predict(in, hrz, out);
+        return out;
+      }
+    , pybind11::arg("data")
+    , pybind11::arg("horizon")
+    )
+    ;
 }

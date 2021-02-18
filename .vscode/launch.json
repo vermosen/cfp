@@ -4,25 +4,39 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-      {
-        "name": "(gdb) test test_cfp",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceFolder}/Debug/bin/test_cfp",
-        "args": [],
-        "stopAtEntry": true,
-        "cwd": "${workspaceFolder}",
-        "environment": [],
-        "externalConsole": false,
-        "MIMode": "gdb",
-        "miDebuggerPath": "/opt/gcc84/bin/gdb",
-        "setupCommands": [
-            {
-                "description": "Enable pretty-printing for gdb",
-                "text": "-enable-pretty-printing",
-                "ignoreFailures": true
-            }
-        ]
+    {
+      "name": "(python) kalman_filter_py",
+      "type": "python",
+      "request": "launch",
+      "module": "unittest",
+      "args": [ 
+        "-v", "test.testPycalc.kalman_filter_py"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/tests/python/pycalc",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/lib/Debug/python"
+      }
+    },
+    {
+      "name": "(gdb) test test_cfp",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/Debug/bin/test_cfp",
+      "args": [],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "miDebuggerPath": "/opt/gcc84/bin/gdb",
+      "setupCommands": [
+          {
+              "description": "Enable pretty-printing for gdb",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+          }
+      ]
     }
   ]
 }

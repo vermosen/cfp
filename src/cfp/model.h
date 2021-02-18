@@ -346,6 +346,7 @@ namespace cfp {
       pc = amat * cc * amat.transpose() + qmat;
       gain = (pc * m_c.transpose()) / (m_c * pc * m_c.transpose() + m_r);
 
+      // TODO: use constexpr here
       if (c) {
         c->m_pmeans.push_back(pm);
         c->m_pcovs.push_back(pc);
