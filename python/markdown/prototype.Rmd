@@ -1,81 +1,214 @@
----
-title: "cfp model prototype"
-author: "jean-mathieu vermosen"
-date: "4/26/2020"
-output: html_document
----
+```{python}
+import numpy as np
 
-```{r setup, include=FALSE}
-Sys.setenv(RETICULATE_PYTHON = '/opt/miniconda/bin/python')
-knitr::opts_chunk$set(echo = TRUE)
-
-library(reticulate)
+import plotly as pl
+import plotly.graph_objs as go
+from plotly.subplots import make_subplots
 ```
 
 ## the Chen Feng Palomar model 
 
-This document present the Chen-Feng-Palomar model in python
+This document present a rudimentary python implementation of the Chen-Feng-Palomar model.
 
-```{python}
-import sys
-sys.path.append('/home/jvermosen/git/otos/lib/Release/python')
-
-import otos.cfp
-import numpy as np
-import datatable as dt
-from datatable import f
-```
-
-the cfp model is specified by the following system:
+Given a day indexed by $t\in T$ and an intraday observation indexed by $i\in I$, we define the time index $\tau\equiv t\times i$. The cfp model is specified by the following system:
 
 $$
 \begin{aligned}
-y_t &= x_t \cdot c + \epsilon_t \\
-x_{t+1} &= A_tx_t + \gamma_t
+y_\tau &= c \cdot x_\tau + \epsilon_\tau \\
+x_{\tau+1} &= A_\tau x_\tau + \phi_\tau + \gamma_\tau
 \end{aligned}
 $$
-with $\epsilon_t\sim \mathcal N(0, r)$ and $\gamma_t\sim\mathcal N(0, Q_t)$. Furthermore, the matrix $A_t$ is such that:
-
+with $\epsilon_\tau\sim \mathcal N(0, Q_\tau)$ and $\gamma_\tau\sim\mathcal N(0, r)$. We also have the following specifications: 
+- $c = [1 \ 1]$.
+- The matrix $A_\tau$ is such that:
 $$
 \begin{aligned}
-A_t=\left[
+A_\tau & = \left[
 \begin{array}{cc}
-\eta_t& 0\\
-0 & \nu_t
+a_\eta& 0\\
+0 & a_\mu
 \end{array}
-\right]
+\right]\text{, for $\tau$ such that $i = 1$}\\
+A_\tau & = \left[
+\begin{array}{cc}
+1 & 0\\
+0 & a_\mu
+\end{array}
+\right]\text{, for $\tau$ such that $i \neq 1$}\\
+\end{aligned}
+$$
+- The matrix $Q_\tau$ is such that 
+$$
+\begin{aligned}
+Q_\tau & = \left[
+\begin{array}{cc}
+s_\eta& 0\\
+0 & s_\mu
+\end{array}
+\right]\text{, for $\tau$ such that $i = 1$}\\
+Q_\tau & = \left[
+\begin{array}{cc}
+0 & 0\\
+0 & s_\mu
+\end{array}
+\right]\text{, for $\tau$ such that $i \neq 1$}\\
 \end{aligned}
 $$
 
 ```{python}
-p = otos.cfp.parameters()
-p.a_eta = 0.3
-p.a_mu  = 1.0
-p.s_eta = 1e-15
-p.s_mu  = 1e-15
-p.r     = 1e-15
-p.pi    = [0.3, 1.0]
-p.sigma = [1e-15, 1e-15]
-p.psi   = [1.0, 1.0, 1.0, 1.0]
+class parameters:
+    def __init__(self, a_eta, a_mu, s_eta, s_mu, r, pi, sigma, phi):
+        self.a_eta = a_eta
+        self.a_mu = a_mu
+        self.s_eta = s_eta
+        self.s_mu = s_mu
+        self.r = r
+        self.pi = pi
+        self.sigma = sigma
+        self.phi = phi
+        
+    @property
+    def a_0(self):
+        return np.array([[self.a_eta, 0.0], [0.0, self.a_mu]])
+    
+    @property
+    def a_1(self):
+        return np.array([[1.0, 0.0], [0.0, self.a_mu]])
+    
+    @property
+    def q_0(self):
+        return np.array([[self.s_eta, 0.0], [0.0, self.s_mu]])
+    
+    @property
+    def q_1(self):
+        return np.array([[0.0, 0.0], [0.0, self.s_mu]])
 ```
-
-* simulate according to the passed parameters
 
 ```{python}
-import numpy as np
-np.random.seed(1234)
-data = otos.cfp.simulate(p, size=1000)
-```
+class model:
+    def __init__(self, params):
+        self.params = params
+        
+    def simulate(self, ndays, seed=None, debug=False):
+        np.random.seed(seed)
+        T = len(self.params.phi) * ndays
+        res = np.zeros(T)
+        
+        a_0 = self.params.a_0
+        a_1 = self.params.a_1
+        q_0 = self.params.q_0
+        q_1 = self.params.q_1
+        
+        s1 = np.array([[self.params.sigma[0], 0.0], [0.0, self.params.sigma[1]]])
+        x = np.random.multivariate_normal(self.params.pi, s1)
+        c = np.array([1.0, 1.0]).reshape((1, 2))
 
-# create model object and compute the kalman filter/smoother of the time series
+        for tau in range(0, T):
+            t = tau % len(self.params.phi)
+                
+            if t == 0:
+                x = a_0 @ x + np.random.multivariate_normal([0.0, 0.0], q_0)
+            else:
+                x = a_1 @ x + np.random.multivariate_normal([0.0, 0.0], q_1)
+
+            res[tau] = c @ x + self.params.phi[t] + np.random.normal(0.0, self.params.r)
+            
+        return res
+        
+```
 
 ```{python}
-model = otos.cfp.model(p)
-flt = model.filter(data)
-smt = model.smoother(data)
+# scaling variance
+var = 1e-2
+
+p = parameters(
+          a_eta = 0.3
+        , a_mu  = 0.9
+        , s_eta = 0.1 * var
+        , s_mu  = 0.3 * var
+        , r     = var
+        , pi    = [0.0, 0.0]
+        , sigma = [0.1 * var, 0.1 * var]
+        , phi   = [1.0, 0.4, 0.5, 0.6, 0.8]
+)
+
+m = model(p)
 ```
 
-# apply the em algorithm to retrieve the parameters
+### 1. simulate according to a given model dynamic
+
+```{python}
+ndays = 10
+nsims = 40
+sims = [m.simulate(ndays, seed=None) for n in range(0, nsims)]
+
+avg = np.mean(sims, axis=0)
+std = np.std(sims, axis=0)
+stdp = avg + 2 * std
+stdm = avg - 2 * std
+```
+
+```{python}
+fig = make_subplots(rows=1, cols=1)
+fig.add_trace(go.Scatter(y=stdm, line=dict(color='green'), fillcolor='rgba(26,150,65,0.5)'), row = 1, col = 1)
+fig.add_trace(go.Scatter(y=stdp, line=dict(color='green'), fill='tonexty'), row = 1, col = 1)
+fig = fig.add_trace(go.Scatter(y=sims[0], name='data'), row = 1, col = 1)
+fig.update_layout(showlegend=False)
+fig
+```
+
+### 2. compute the kalman filter/smoother of the time series
+
+```{python}
+def filter(self, y, debug=False):
+    
+    T = len(self.params.phi)
+
+    # initial cmean ccov values
+    cmean = np.array(self.params.pi).reshape((2, 1))
+    
+    # initial pmean pcov values
+    ccov = np.array([[self.params.sigma[0], 0.0], [0.0, self.params.sigma[1]]]).reshape((2, 2))
+    
+    c = np.array([1.0, 1.0]).reshape((1, 2))
+    rv = np.zeros(len(y))
+    
+    for t in range(0, len(y)):
+
+        # new day ?
+        if t % T == 0:
+            amat = self.params.a_0
+            qmat = self.params.a_1
+        else:
+            amat = self.params.q_0
+            qmat = self.params.q_1
+
+        pmean = amat @ cmean
+        pcov  = amat @ ccov @ np.transpose(amat) + qmat
+        kgain = pcov @ np.transpose(c) / (c @ pcov @ np.transpose(c) + self.params.r)
+        tt = kgain * (y[t] - self.params.phi[t % T] - c @ pmean)
+        cmean = pmean + kgain * (y[t] - self.params.phi[t % T] - c @ pmean)
+        ccov  = pcov - kgain @ c @ pcov
+        
+        # the filtered signal
+        
+        rv[t] = c @ pmean + self.params.phi[t % T]
+    return rv
+
+setattr(model, 'filter', filter)
+```
+
+```{python}
+flts = [m.filter(s) for s in sims]
+```
+
+```{python}
+fig = make_subplots(rows=1, cols=1)
+fig.add_trace(go.Scatter(y=flts[0], name = 'filter'), row = 1, col = 1)
+fig.add_trace(go.Scatter(y=sims[0], name = 'data'), row = 1, col = 1)
+fig.update_layout(showlegend=True)
+fig
+```
 
 ```{python}
 
