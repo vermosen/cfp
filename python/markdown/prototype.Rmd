@@ -1,5 +1,5 @@
 ---
-title: "cfp model in package 'cfp'"
+title: "cfp model prototype"
 author: "jean-mathieu vermosen"
 date: "4/26/2020"
 output: html_document

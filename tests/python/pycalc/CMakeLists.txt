@@ -11,7 +11,7 @@ add_py_unittest(
 
 add_py_unittest(
 	EXEC ${PYTHON_EXECUTABLE} 
-	NAME klman_filter_py
+	NAME kalman_filter_py
 	CLASS testPycalc 
 	FILE test
 	PYTHONPATH ${PYTHONPATH_TESTSUITE}

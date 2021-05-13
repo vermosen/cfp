@@ -101,8 +101,8 @@ TEST(unittest, model_simulate_v2) {
     , 14.73957,15.16542, 15.99318 };
 
   md = model<double, 2>(x0);
-  auto rec = md.emax<cfp::recorders::type::simple>(data, out, 9000, 1e-16);
-  ASSERT_FLOAT_EQ(out.m_a_eta,  -0.062779106);
+  auto rec = md.emax<cfp::recorders::type::simple>(data, out, 1000, 1e-10);
+  ASSERT_FLOAT_EQ(out.m_a_eta,  0.30970117964);
 }
 
 int main(int argc, char* argv[]) {

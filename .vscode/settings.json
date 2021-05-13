@@ -1,10 +1,13 @@
 {
   "cmake.configureArgs": [
       "-DCMAKE_PROFILE:STRING=gcc84",
-      "-DOTOS-DOCS:BOOL=OFF",
-      "-DCMAKE_VERBOSE:BOOL=ON",
-      "-DCMAKE_INSTALL_PREFIX:PATH=${workspaceFolder}"
+      "-DVERBOSE:BOOL=ON",
+      "-DCFP-DOCS:BOOL=OFF",
+      "-DCMAKE_INSTALL_PREFIX:PATH=${workspaceFolder}",
+      "-DPYTHON_LOCATION_HINT:PATH=/opt/miniconda/envs/py38",
+      "-DCONAN_BIN_PATH=/opt/miniconda/envs/py38/bin"
   ],
+  "cmake.generator": "Ninja",
   "cmake.buildDirectory": "${workspaceFolder}/${buildType}",
   "cmake.buildTask": false,
   "cmake.environment": {

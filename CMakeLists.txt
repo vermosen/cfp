@@ -44,15 +44,11 @@ PROJECT(
 ##############################
 
 set(GTEST_VERS      "1.8.1" )
-set(RCPP_VERS       "1.0.4" )
 set(PYBIND11_VERS   "2.5.0" )
 set(EIGEN_VERS      "3.3.7" )
 set(DOXYGEN_VERS    "1.8.18")
-set(RCPPUTILS_VERS  "0.1.3" )
 
 set(PACKAGES
-   rcpp
-   RcppUtils
    gtest
    pybind11
    eigen
@@ -64,7 +60,7 @@ message(STATUS "package list has been set to ${PACKAGES}")
 # imported packages
 load_packages(
 	NAME ${PACKAGES}
-	PROFILE ${CONAN_PROFILE}
+	PROFILE ${CMAKE_PROFILE}
 	SETTINGS ${CONAN_EXTRA_SETTINGS}
 	OPTIONS ""
 	UPDATE
@@ -90,7 +86,6 @@ add_subdirectory(src/cfp)
 #    add the project applications   #
 #####################################
 
-add_subdirectory(R/package)
 add_subdirectory(python/package)
 
 #####################################
