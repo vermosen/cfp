@@ -118,7 +118,7 @@ class model:
 ```
 
 ```{python}
-# scaling variance
+# variance scaling parameter 
 var = 1e-2
 
 p = parameters(
@@ -158,6 +158,7 @@ fig
 ```
 
 ### 2. compute the kalman filter/smoother of the time series
+the filter is defined as follow:
 
 ```{python}
 def filter(self, y, debug=False):
@@ -199,6 +200,7 @@ setattr(model, 'filter', filter)
 ```
 
 ```{python}
+# filtered sims trajectories
 flts = [m.filter(s) for s in sims]
 ```
 
@@ -210,60 +212,85 @@ fig.update_layout(showlegend=True)
 fig
 ```
 
-```{python}
-
-# dummy
-model = otos.cfp.model(p)
-fit = model.emax(data, 10000, 1e-15)
-```
-
-# plot 
+the smoother can be defined as:
 
 ```{python}
-
-import plotly, json
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-
-pl = make_subplots(rows = 1, cols = 1, shared_xaxes=True)
-
-pl = pl.add_trace(go.Scattergl(y = data, name = 'simulation'
-    ), row=1, col=1)
-pl = pl.add_trace(go.Scattergl(y = flt, name = 'filter'
-    ), row=1, col=1)
-pl = pl.add_trace(go.Scattergl(y = smt, name = 'smoother'
-    ), row=1, col=1)
+def smoother(self, y, debug=False):
     
-plotly.io.write_html(pl, file='cfp_fig1.html', auto_open=False)
-```
+    T = len(self.params.phi)
 
-```{r echo=FALSE}
-htmltools::includeHTML("cfp_fig1.html")
+    # initial cmean ccov values
+    cmean = [np.array(self.params.pi).reshape((2, 1))]
+    
+    # initial pmean pcov values
+    ccov = [np.array([[self.params.sigma[0], 0.0], [0.0, self.params.sigma[1]]]).reshape((2, 2))]
+    
+    c = np.array([1.0, 1.0]).reshape((1, 2))
+    rv = np.zeros(len(y))
+    
+    pmean = []; pcov = []
+    for t in range(0, len(y)):
+
+        # new day ?
+        if t % T == 0:
+            amat = self.params.a_0
+            qmat = self.params.a_1
+        else:
+            amat = self.params.q_0
+            qmat = self.params.q_1
+
+        pmean.append(amat @ cmean[t])
+        pcov.append(amat @ ccov[t] @ np.transpose(amat) + qmat)
+        kgain = pcov[t] @ np.transpose(c) / (c @ pcov[t] @ np.transpose(c) + self.params.r)
+        tt = kgain * (y[t] - self.params.phi[t % T] - c @ pmean[t])
+        cmean.append(pmean[t] + kgain * (y[t] - self.params.phi[t % T] - c @ pmean[t]))
+        ccov.append(pcov[t] - kgain @ c @ pcov[t])
+        pass
+    
+    # initial smean values
+    smean = cmean[-1]
+    scov = ccov[-1]
+    
+    for t in reversed(range(0, len(y))):
+        
+        if t % T == 0:
+            amat = self.params.a_0
+            qmat = self.params.a_1
+        else:
+            amat = self.params.q_0
+            qmat = self.params.q_1
+        
+        l = ccov[t + 1] @ np.transpose(amat) @ np.linalg.inv(pcov[t])
+        smean = cmean[t + 1] + l @ (smean - pmean[t])
+        scov  = ccov[t + 1] + l @ (scov - pcov[t]) @ np.transpose(l)
+        rv[t] = c @ smean + self.params.phi[t % T]
+    
+    return rv
+
+setattr(model, 'smoother', smoother)
 ```
 
 ```{python}
+# filtered sims trajectories
+smts = [m.smoother(s) for s in sims]
 
-np.random.seed(1234)
+fig = make_subplots(rows=1, cols=1)
+fig.add_trace(go.Scatter(y=flts[0], name = 'filter'), row = 1, col = 1)
+fig.add_trace(go.Scatter(y=smts[0], name = 'smoother'), row = 1, col = 1)
+fig.add_trace(go.Scatter(y=sims[0], name = 'data'), row = 1, col = 1)
+fig.update_layout(showlegend=True)
+fig
+```
 
-p = otos.cfp.parameters()
-p.a_eta = 0.93970117964
-p.a_mu  = 0.617656427391
-p.s_eta = 0.00611157182105
-p.s_mu  = 0.100157446738
-p.pi    = [-0.0377453676475, 0.637412180444]
-p.sigma = [9.49012643982e-05, 0.00182247858807]
-p.r     = 0.0670554645138
-p.psi   = [ 
-           15.3322974898, 14.8914481022, 14.8960953411
-         , 14.7328251327, 14.717101214 , 14.600429107 , 14.5878141379
-         , 14.51710026  , 14.4863107795, 14.381950856 , 14.3423713871
-         , 14.2429064605, 14.2109154215, 14.1635064751, 14.2339929961
-         , 14.1522787054, 14.1947867672, 14.1869497863, 14.4385168913
-         , 14.3792550185, 14.4077635371, 14.4649051166, 14.624926768
-         , 14.7170306255, 15.0749366985, 15.9959231225 
-        ]
+### parameters inference
+The join likelihood function for the model can be written as:
+$$
+\begin{aligned}
+\log l(x, y) = & -\sum^N_{\tau=1}\left(\frac{\left(y_\tau - \psi_\tau - Cx_\tau\right)^2}{2r}\right)\\
+& - \sum^N_{\tau=2}
+\end{aligned}
+$$
 
-md = otos.cfp.model(p)
-df = dt.Frame(sim=otos.cfp.simulate(p, size=1000))
-df = df[:, f[:].extend({'foo': md.predict(df[:, 'sim'], 10)})]
+```{python}
+#
 ```
