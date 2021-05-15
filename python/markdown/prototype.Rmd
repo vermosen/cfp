@@ -8,7 +8,7 @@ from plotly.subplots import make_subplots
 
 ## the Chen Feng Palomar model 
 
-This document present a rudimentary python implementation of the Chen-Feng-Palomar model.
+This document present a baseline implementation of the Chen-Feng-Palomar model.
 
 Given a day indexed by $t\in T$ and an intraday observation indexed by $i\in I$, we define the time index $\tau\equiv t\times i$. The cfp model is specified by the following system:
 
@@ -64,8 +64,28 @@ class parameters:
         self.s_mu = s_mu
         self.r = r
         self.pi = pi
-        self.sigma = sigma
+        self.sigma_ = sigma
         self.phi = phi
+        
+    def to_array(self):
+        data = [
+              self.a_eta
+            , self.a_mu
+            , self.s_eta
+            , self.s_mu
+            , self.r
+        ] + self.pi + self.sigma_ + self.phi
+        return np.array(data)
+    
+    def __repr__(self):
+        retval = 'parameters('             \
+               +   'a_eta=%f' % self.a_eta \
+               + ', a_mu=%f' % self.a_mu   \
+               + ', s_eta=%f' % self.s_eta \
+               + ', s_mu=%f' % self.s_mu \
+               + ', r=%f)' % self.r \
+        
+        return retval
         
     @property
     def a_0(self):
@@ -82,6 +102,14 @@ class parameters:
     @property
     def q_1(self):
         return np.array([[0.0, 0.0], [0.0, self.s_mu]])
+    
+    @property
+    def sigma(self):
+        return np.array([[self.sigma_[0], 0.0], [0.0, self.sigma_[1]]])
+    
+    @property
+    def periodicity(self):
+        return len(self.phi)
 ```
 
 ```{python}
@@ -99,7 +127,7 @@ class model:
         q_0 = self.params.q_0
         q_1 = self.params.q_1
         
-        s1 = np.array([[self.params.sigma[0], 0.0], [0.0, self.params.sigma[1]]])
+        s1 = self.params.sigma
         x = np.random.multivariate_normal(self.params.pi, s1)
         c = np.array([1.0, 1.0]).reshape((1, 2))
 
@@ -121,7 +149,7 @@ class model:
 # variance scaling parameter 
 var = 1e-2
 
-p = parameters(
+true_p = parameters(
           a_eta = 0.3
         , a_mu  = 0.9
         , s_eta = 0.1 * var
@@ -132,15 +160,15 @@ p = parameters(
         , phi   = [1.0, 0.4, 0.5, 0.6, 0.8]
 )
 
-m = model(p)
+true_m = model(true_p)
 ```
 
 ### 1. simulate according to a given model dynamic
 
 ```{python}
-ndays = 10
-nsims = 40
-sims = [m.simulate(ndays, seed=None) for n in range(0, nsims)]
+ndays = 60; nsims = 100
+
+sims = [true_m.simulate(ndays, seed=None) for n in range(0, nsims)]
 
 avg = np.mean(sims, axis=0)
 std = np.std(sims, axis=0)
@@ -149,16 +177,25 @@ stdm = avg - 2 * std
 ```
 
 ```{python}
+n = 100
+
 fig = make_subplots(rows=1, cols=1)
-fig.add_trace(go.Scatter(y=stdm, line=dict(color='green'), fillcolor='rgba(26,150,65,0.5)'), row = 1, col = 1)
-fig.add_trace(go.Scatter(y=stdp, line=dict(color='green'), fill='tonexty'), row = 1, col = 1)
-fig = fig.add_trace(go.Scatter(y=sims[0], name='data'), row = 1, col = 1)
+fig.add_trace(go.Scatter(y=stdm[0:n-1], line=dict(color='green'), fillcolor='rgba(26,150,65,0.5)'), row = 1, col = 1)
+fig.add_trace(go.Scatter(y=stdp[0:n-1], line=dict(color='green'), fill='tonexty'), row = 1, col = 1)
+fig = fig.add_trace(go.Scatter(y=sims[0][0:n-1], name='data'), row = 1, col = 1)
 fig.update_layout(showlegend=False)
 fig
 ```
 
 ### 2. compute the kalman filter/smoother of the time series
-the filter is defined as follow:
+The filter is defined as follow:
+$$
+\begin{aligned}
+L_\tau & = \Sigma_{\tau\vert\tau}A^t_\tau\Sigma^{-1}_{\tau + 1 \vert \tau}\\
+\hat x_{\tau\vert N} & = \hat{x}_{\tau\vert\tau} + L_{\tau}\left(\hat{x}_{\tau+1\vert N} - \hat{x}_{\tau+1\vert \tau}\right)\\
+\Sigma_{\tau\vert N} & = \Sigma_{\tau\vert \tau} + L_{\tau}\left(\Sigma_{\tau + 1\vert N} - \Sigma_{\tau + 1\vert \tau}\right)L^t_\tau
+\end{aligned}
+$$
 
 ```{python}
 def filter(self, y, debug=False):
@@ -169,7 +206,7 @@ def filter(self, y, debug=False):
     cmean = np.array(self.params.pi).reshape((2, 1))
     
     # initial pmean pcov values
-    ccov = np.array([[self.params.sigma[0], 0.0], [0.0, self.params.sigma[1]]]).reshape((2, 2))
+    ccov = self.params.sigma
     
     c = np.array([1.0, 1.0]).reshape((1, 2))
     rv = np.zeros(len(y))
@@ -201,13 +238,15 @@ setattr(model, 'filter', filter)
 
 ```{python}
 # filtered sims trajectories
-flts = [m.filter(s) for s in sims]
+flts = [true_m.filter(s) for s in sims]
 ```
 
 ```{python}
+n=100
+
 fig = make_subplots(rows=1, cols=1)
-fig.add_trace(go.Scatter(y=flts[0], name = 'filter'), row = 1, col = 1)
-fig.add_trace(go.Scatter(y=sims[0], name = 'data'), row = 1, col = 1)
+fig.add_trace(go.Scatter(y=flts[0][0:n-1], name = 'filter'), row = 1, col = 1)
+fig.add_trace(go.Scatter(y=sims[0][0:n-1], name = 'data'), row = 1, col = 1)
 fig.update_layout(showlegend=True)
 fig
 ```
@@ -223,7 +262,7 @@ def smoother(self, y, debug=False):
     cmean = [np.array(self.params.pi).reshape((2, 1))]
     
     # initial pmean pcov values
-    ccov = [np.array([[self.params.sigma[0], 0.0], [0.0, self.params.sigma[1]]]).reshape((2, 2))]
+    ccov = [self.params.sigma]
     
     c = np.array([1.0, 1.0]).reshape((1, 2))
     rv = np.zeros(len(y))
@@ -272,12 +311,14 @@ setattr(model, 'smoother', smoother)
 
 ```{python}
 # filtered sims trajectories
-smts = [m.smoother(s) for s in sims]
+smts = [true_m.smoother(s) for s in sims]
+
+n = 100
 
 fig = make_subplots(rows=1, cols=1)
-fig.add_trace(go.Scatter(y=flts[0], name = 'filter'), row = 1, col = 1)
-fig.add_trace(go.Scatter(y=smts[0], name = 'smoother'), row = 1, col = 1)
-fig.add_trace(go.Scatter(y=sims[0], name = 'data'), row = 1, col = 1)
+fig.add_trace(go.Scatter(y=flts[0][0:n-1], name = 'filter'), row = 1, col = 1)
+fig.add_trace(go.Scatter(y=smts[0][0:n-1], name = 'smoother'), row = 1, col = 1)
+fig.add_trace(go.Scatter(y=sims[0][0:n-1], name = 'data'), row = 1, col = 1)
 fig.update_layout(showlegend=True)
 fig
 ```
@@ -292,5 +333,218 @@ $$
 $$
 
 ```{python}
-#
+
+def likelihood(self, y, debug=False):
+    
+    N = len(y)
+    T = N % len(self.params.phi)
+    
+    # TODO
+    #like = -0.5 * 
+    like = like -0.5 * np.log(np.linalg.det(p.sigma)) - 0.5 * (2 * N + T) * np.log(2 * np.pi)
+    return like
+
+setattr(model, 'likelihood', likelihood)
+```
+
+```{python}
+#lkhs = [m.likelihood(s) for s in sims]
+```
+
+```{python}
+def em(self, y, tol = 1e-8, maxit=500, norm = None, debug = False):
+    
+    # initial conditions
+    p     = self.params
+    score = 1e10
+    n     = 0
+    
+    while (score > tol and n < maxit):
+
+        T = self.params.periodicity
+        N = len(y)
+        ndays = N / T
+
+        # initial cmean ccov values
+        cmean = [np.array(p.pi).reshape((2, 1))]
+
+        # initial pmean pcov values
+        ccov = [p.sigma]
+
+        c = np.array([1.0, 1.0]).reshape((1, 2))
+        rv = np.zeros(len(y))
+
+        pmean = []; pcov = []; kgain = []
+        for t in range(0, len(y)):
+
+            # new day ?
+            if t % T == 0:
+                amat = p.a_0
+                qmat = p.a_1
+            else:
+                amat = p.q_0
+                qmat = p.q_1
+
+            pmean.append(amat @ cmean[t])
+            pcov.append(amat @ ccov[t] @ np.transpose(amat) + qmat)
+            kgain.append(pcov[t] @ np.transpose(c) / (c @ pcov[t] @ np.transpose(c) + p.r))
+            cmean.append(pmean[t] + kgain[t] * (y[t] - p.phi[t % T] - c @ pmean[t]))
+            ccov.append(pcov[t] - kgain[t] @ c @ pcov[t])
+
+        # initial smean values
+        smean = [cmean[-1]]
+        scov  = [ccov[-1]]
+        sl    = []
+        
+        for t in reversed(range(0, len(y))):
+
+            if t % T == 0:
+                amat = self.params.a_0
+                qmat = self.params.a_1
+            else:
+                amat = self.params.q_0
+                qmat = self.params.q_1
+
+            try:
+                inv = np.linalg.inv(pcov[t])
+            except np.linalg.LinAlgError as ex:
+                print('in iteration %s, matrix %s is singular !' % (n, pcov[t]))
+                raise ex
+                
+            sl.append(ccov[t + 1] @ np.transpose(amat) @ inv)
+            smean.append(cmean[t + 1] + sl[-1] @ (smean[-1] - pmean[t]))
+            scov.append(ccov[t + 1] + sl[-1] @ (scov[-1] - pcov[t]) @ np.transpose(sl[-1]))
+
+        # algo 3: now we compute each updated parameter
+        xhat  = [None] * len(y)
+        phat  = [None] * len(y)
+        shat  = [None] * len(y)
+        pphat = [None] * len(y)
+        first = True
+        
+        for t in reversed(range(0, len(y))):
+            
+            if t % T == 0:
+                amat = self.params.a_0
+                qmat = self.params.a_1
+            else:
+                amat = self.params.q_0
+                qmat = self.params.q_1
+            
+            xhat[t]  = smean[t]
+            phat[t]  = scov[t] + xhat[t] @ np.transpose(xhat[t])
+            
+            if first:
+                shat[t] = (np.array([[1.0, 0.0], [0.0, 1.0]]) - kgain[t] @ c) @ amat @ ccov[t + 1]
+                first = False
+            else:
+                shat[t]  = ccov[t + 1] @ np.transpose(sl[t]) + sl[t] @ (shat[t + 1] - amat @ ccov[t + 1]) @ np.transpose(sl[t])
+                
+            # this one cannot be computed for t = 0
+            if t > 0:
+                pphat[t] = shat[t] + smean[t] @ np.transpose(smean[t - 1])
+        
+        # compute the updated parameters
+        pi = xhat[0]
+        sigma = phat[0] - pi @ np.transpose(pi)
+        
+        a_eta_n = 0; a_eta_d = 0
+        a_mu_n = 0; a_mu_d = 0
+        s_mu = 0; s_eta = 0
+        r = 0; phi = [0.0] * self.params.periodicity
+        
+        for t in range(1, len(y)):
+            if t % T == 0:
+                a_eta_n += pphat[t][0][0]
+                a_eta_d += phat[t][0][0]
+        
+            a_mu_n += pphat[t][1][1]
+            a_mu_d += phat[t][1][1]
+        
+        a_eta = a_eta_n / a_eta_d
+        a_mu  = a_mu_n / a_mu_d
+        
+        for t in range(1, len(y)):
+            if t % T == 0:
+                s_eta += phat[t][0][0] + a_eta ** 2 * phat[t-1][0][0] \
+                        - 2 * a_eta * pphat[t][0][0]
+        
+            s_mu += phat[t][1][1] + a_mu ** 2 * phat[t-1][1][1] \
+                        - 2 * a_mu * pphat[t][1][1]
+        
+        s_mu  /= T - 1
+        s_eta /= N - 1
+        
+        for t in range(1, len(y)):
+            phi[t % T] += y[t] - c @ xhat[t]
+        
+        phi = [f / T for f in phi]
+        
+        for t in range(0, len(y)):
+            r += y[t] * y[t] + c @ phat[t] @ np.transpose(c)
+            r -= 2 * y[t] * c @ xhat[t] + phi[t % T] * phi[t % T]
+            r -= 2 * y[t] * phi[t % T] + 2 * phi[t % T] * c @ xhat[t]
+        
+        r /= N
+        
+        print(phi)
+        newp  = parameters(a_eta = a_eta
+                   , a_mu = a_mu, s_eta = s_eta
+                   , s_mu = s_mu, r = r, pi = [pi[0], pi[1]]
+                   , sigma = [sigma[0][0], sigma[1][1]], phi = phi)
+        
+        score = norm(newp, p)
+        p     = newp
+        n    += 1
+        
+    if debug:
+        return p, score, n
+    else:
+        return p
+
+setattr(model, 'em', em)
+```
+
+```{python}
+def norm(p1, p2):
+    return np.linalg.norm(p1.to_array() - p2.to_array(), 2)
+```
+
+```{python}
+# model created
+p = parameters(
+          a_eta = 0.1
+        , a_mu  = 0.1
+        , s_eta = 0.1
+        , s_mu  = 0.1
+        , r     = 0.1
+        , pi    = [0.0, 0.0]
+        , sigma = [0.1, 0.1]
+        , phi   = [1.0] * 5
+)
+
+m = model(p)
+
+smts = []; scores = []; iters = []
+for i in range(0, 1):
+    param, score, niter = m.em(sims[i], norm = norm, debug=True)
+    smts.append(param)
+    scores.append(score)
+    iters.append(niter)
+```
+
+```{python}
+iters
+```
+
+```{python}
+scores
+```
+
+```{python}
+[s.phi for s in smts]
+```
+
+```{python}
+
 ```

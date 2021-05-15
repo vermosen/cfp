@@ -5,7 +5,7 @@
       "-DCFP-DOCS:BOOL=OFF",
       "-DCMAKE_INSTALL_PREFIX:PATH=${workspaceFolder}",
       "-DPYTHON_LOCATION_HINT:PATH=/opt/miniconda/envs/py38",
-      "-DCONAN_BIN_PATH=/opt/miniconda/envs/py38/bin"
+      "-DCONAN_BIN_PATH:PATH=/opt/miniconda/envs/py38/bin"
   ],
   "cmake.generator": "Ninja",
   "cmake.buildDirectory": "${workspaceFolder}/${buildType}",
@@ -96,5 +96,6 @@
       "typeinfo": "cpp",
       "valarray": "cpp",
       "variant": "cpp"
-  }
+  },
+  "python.pythonPath": "/opt/miniconda/envs/py38/bin/python"
 }

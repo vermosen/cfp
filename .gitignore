@@ -6,11 +6,11 @@
 obj
 bin
 
-# build
+# cmake build
 build
-[Dd]ebug
-[Rr]elease
-[Pp]rofiling
+/[Dd]ebug/
+/[Rr]elease/
+/[Pp]rofiling/
 
 # jupyter
 .ipynb_checkpoints

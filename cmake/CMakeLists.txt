@@ -36,8 +36,10 @@ endif()
 
 # load the utils module
 include("${CMAKE_CURRENT_LIST_DIR}/module/utils.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/r/CMakeLists.txt")
-include("${CMAKE_CURRENT_LIST_DIR}/documentation/CMakeLists.txt")
+
+if (CFP-DOCS)
+    include("${CMAKE_CURRENT_LIST_DIR}/documentation/CMakeLists.txt")
+endif()
 
 # find conan install
 find_conan(

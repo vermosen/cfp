@@ -5,15 +5,29 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "(python) kalman_filter_py",
+      "name": "(python) em_py",
       "type": "python",
       "request": "launch",
       "module": "unittest",
       "args": [ 
-        "-v", "test.testPycalc.kalman_filter_py"
+        "-v", "test.testPycalc.test_em_py"
       ],
       "console": "integratedTerminal",
-      "cwd": "${workspaceFolder}/tests/python/pycalc",
+      "cwd": "${workspaceFolder}/tests/python/debug",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/lib/Debug/python"
+      }
+    },
+    {
+      "name": "(python) smoother_py",
+      "type": "python",
+      "request": "launch",
+      "module": "unittest",
+      "args": [ 
+        "-v", "test.testPycalc.test_kalmansmoother_py"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/tests/python/debug",
       "env": {
         "PYTHONPATH": "${workspaceFolder}/lib/Debug/python"
       }

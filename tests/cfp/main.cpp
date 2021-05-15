@@ -91,7 +91,7 @@ TEST(unittest, model_simulate_v2) {
   x0.m_pi_2  = -0.8862641   ;
   x0.m_sig_1 = 1.182454e-06;
   x0.m_sig_2 = 5.822829e-05;
-  x0.m_r = 0.08363227;
+  x0.m_r     = 0.08363227;
   x0.m_psi = {15.4187, 14.90523, 14.82741
     , 14.63593, 14.71093, 14.53411, 14.65409
     , 14.54779, 14.41814, 14.35303, 14.30254
@@ -101,8 +101,8 @@ TEST(unittest, model_simulate_v2) {
     , 14.73957,15.16542, 15.99318 };
 
   md = model<double, 2>(x0);
-  auto rec = md.emax<cfp::recorders::type::simple>(data, out, 1000, 1e-10);
-  ASSERT_FLOAT_EQ(out.m_a_eta,  0.30970117964);
+  auto rec = md.emax<cfp::recorders::type::simple>(data, out, 200, 1e-10);
+  ASSERT_FLOAT_EQ(out.m_a_eta,  0.016738001);
 }
 
 int main(int argc, char* argv[]) {
