@@ -5,8 +5,10 @@
 
 obj
 bin
+lib
 
 # cmake build
+lib
 build
 /[Dd]ebug/
 /[Rr]elease/
