@@ -544,7 +544,3 @@ scores
 ```{python}
 [s.phi for s in smts]
 ```
-
-```{python}
-
-```
